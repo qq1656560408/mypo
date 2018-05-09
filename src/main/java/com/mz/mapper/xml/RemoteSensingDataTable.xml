@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mz.mapper.RemoteSensingDataTableMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.mz.entity.RemoteSensingDataTable">
+		<id column="remoteSensingDataID" property="remoteSensingDataID" />
+		<result column="name" property="name" />
+		<result column="url" property="url" />
+		<result column="parentsID" property="parentsID" />
+	</resultMap>
+	
+	<resultMap id="showRemoteSensing" type="com.mz.vo.ShowRemoteSensing">
+		<id column="remoteSensingDataID" property="id" />
+		<result column="name" property="text" />
+		<result column="url" property="url" />
+		<result column="parentsID" property="parentsID" />
+	</resultMap>
+	
+
+
+	<select id="selectRemoteSensing" resultType="com.mz.vo.ShowRemoteSensing" resultMap="showRemoteSensing"
+		resultSets="com.mz.vo.ShowRemoteSensing" >
+		select * from remote_sensing_data_table where parentsID=#{parentId}
+	</select>
+	
+	<insert id="insertTopNode" useGeneratedKeys="true" keyColumn="remoteSensingDataID" keyProperty="remoteSensingDataTable.remoteSensingDataID">
+	    insert into remote_sensing_data_table (name,parentsID) values(#{remoteSensingDataTable.name},#{remoteSensingDataTable.parentsID});
+	</insert>
+	
+	<update id="updateFile">
+	   update remote_sensing_data_table set url=#{url} where remoteSensingDataID=#{id}
+	</update>
+	
+	<update id="updateName">
+	   update remote_sensing_data_table set name=#{name} where remoteSensingDataID=#{id}
+	</update>
+	<update id="updateParentsID">
+	   update remote_sensing_data_table set parentsID=#{parentsID} where remoteSensingDataID=#{id}
+	</update>
+	
+	<delete id="deleteByID">
+	   delete from remote_sensing_data_table where remoteSensingDataID=#{id}
+	</delete>
+	
+	
+</mapper>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mz.mapper.ProcessFileTableMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.mz.entity.ProcessFileTable">
+		<id column="processFileID" property="processFileID" />
+		<result column="processFileMC" property="processFileMC" />
+		<result column="processFileURL" property="processFileURL" />
+		<result column="parentID" property="parentID" />
+	</resultMap>
+	
+	<resultMap id="ShowProcessFile" type="com.mz.vo.ShowProcessFile">
+		<id column="processFileID" property="id" />
+		<result column="processFileMC" property="text" />
+		<result column="processFileURL" property="processFileURL" />
+		<result column="parentID" property="parentID" />
+	</resultMap>
+	
+
+
+
+	<select id="selectProcessFile" resultType="com.mz.vo.ShowProcessFile" resultMap="ShowProcessFile">
+		select * from process_file_table where parentID=#{parentID}
+	</select>
+	
+	<insert id="insertTopNode" useGeneratedKeys="true" keyColumn="processFileID" keyProperty="processFileTable.processFileID">
+	    insert into process_file_table (processFileMC,parentID) 
+	    values(#{processFileTable.processFileMC},#{processFileTable.parentID});
+	</insert>
+	
+	<update id="updateFile">
+	   update process_file_table set processFileURL=#{url} where processFileID=#{id}
+	</update>
+	
+	<update id="updateName">
+	   update process_file_table set processFileMC=#{processFileMC} where processFileID=#{id}
+	</update>
+	
+	<update id="updateParentsID">
+	   update process_file_table set parentID=#{parentID} where processFileID=#{id}
+	</update>
+	
+	<delete id="deleteByID">
+	   delete from process_file_table where processFileID=#{id}
+	</delete>
+
+</mapper>

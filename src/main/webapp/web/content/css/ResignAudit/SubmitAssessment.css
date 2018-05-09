@@ -1,0 +1,61 @@
+html, body {
+	height: 100%;
+}
+
+.layui-form-pane .layui-form-label {
+	padding: 8px 10px;
+}
+
+.layui-btn {
+	margin-bottom: 5px;
+}
+
+.layui-colla-title {
+	height: 38px;
+}
+
+.layui-card {
+	padding: 5px;
+}
+
+.layui-row {
+	padding: 25px;
+}
+
+.layui-form-label {
+	width: auto;
+}
+
+.layui-card-body {
+	text-align: center;
+}
+
+.layui-card-body th{
+	text-align: center;
+}
+
+.layui-colla-content {
+	width: 70%;
+	margin: auto;
+	/* border:1px solid rgb(222,222,222);  */
+	padding: 0 5px;
+	margin-bottom: 20px;
+	margin-top:-17px;
+}
+
+.layui-table td, .layui-table th {
+	padding: 1px 5px;
+	font-size: 13px;
+}
+
+.layui-table {
+	margin: 5px 0;
+}
+
+.layui-form-item {
+	/* margin-bottom: 0; */
+}
+
+#inp_num{
+	width:100px;
+}

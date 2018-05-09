@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mz.mapper.WaterValueTableMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.mz.entity.WaterValueTable">
+		<id column="waterValueID" property="waterValueID" />
+		<result column="waterTypeAndFeaturesID" property="waterTypeAndFeaturesID" />
+		<result column="AmountOfValue" property="AmountOfValue" />
+		<result column="unti" property="unti" />
+		<result column="remark" property="remark" />
+	</resultMap>
+
+	<insert id="insertValue">
+
+		insert into
+		water_value_table(waterTypeAndFeaturesID,AmountOfValue,unti,remark)
+		values
+		<foreach collection="list" item="wvt" index="index" separator=",">
+			(#{wvt.waterTypeAndFeaturesID},#{wvt.AmountOfValue},#{wvt.unti},#{wvt.remark})
+		</foreach>
+
+
+	</insert>
+
+	<insert id="insertValueOne">
+
+		insert into
+		water_value_table(waterTypeAndFeaturesID,AmountOfValue,unti,remark)
+		values
+
+		(#{wvt.waterTypeAndFeaturesID},#{wvt.AmountOfValue},#{wvt.unti},#{wvt.remark})
+
+	</insert>
+	
+	
+	<select id="selectValue" resultType="com.mz.entity.WaterValueTable">
+	select * from water_value_table where waterTypeAndFeaturesID=#{waterTypeAndFeaturesID}
+	</select>
+	
+
+	<update id="updateValue">
+		update water_value_table set AmountOfValue=#{waterValueTable.amountOfValue}
+		where waterValueID=#{waterValueTable.waterValueID}
+	</update>
+
+</mapper>

@@ -1,0 +1,203 @@
+@CHARSET "UTF-8";
+/* 
+  数据管理
+*/
+body {
+	margin: 0px;
+	padding: 0px;
+	overflow: hidden; /* 去掉滚动条 */
+}
+ul {
+	margin: 0px;
+	padding: 0;
+	list-style: none;
+}
+h1,h2,h3,h4,h5,h6 {
+	margin: 0px;
+}
+dl {
+    display: block;
+    -webkit-margin-before: 1em;
+    -webkit-margin-after: 1em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+}
+
+/* 头部  */
+#top {
+	height: 60px;
+	background-color: #298BCA;
+}
+/* 头部标题  */
+#top_title {
+	height: 100%;
+	float: left;
+	cursor: pointer;
+}
+#top_title_img {
+    height: 50px;
+	float: left;
+	position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: 5px;
+}
+
+/* 头部菜单  */
+#top_menu {
+	height: 100%;
+	float: right;
+	margin-right: 20px;
+}
+#top_menu>li {
+	float: left;
+    margin-right: 10px;
+    height: 40px;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    border-radius: 6px;
+    padding: 5px 5px;
+    color: #fff;
+}
+#top_menu>li:hover {
+	background-color:  #1E6FA6;
+}
+.menu_hover_bg {
+	background-color:  #1E6FA6;
+}
+#top_menu>li>a {
+	text-decoration: none;
+	color: #FFF;
+}
+#top_menu>li>a>img {
+	width: 28px;
+	height: 24px;
+	display: block;
+	margin: 0px auto;
+	margin-bottom: 1px;
+}
+#top_menu>li>a>span {
+	font-size: 12px !important;
+}
+/* 登录信息  */
+#top_info {
+	float: right;
+	height: 100%;
+    color: #fff;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 60px;
+    position: relative;
+    margin-right: 25px;
+}
+#top_info>a {
+	line-height: 60px;
+	text-decoration: none;
+	font-size: 12px;
+	display: block;
+    margin: 0 10px;
+    color: #fff;
+    color: rgba(255,255,255,.7);
+    transition: all .3s;
+    -webkit-transition: all .3s;
+}
+#top_info>a>img {
+	width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: inline-block;
+    vertical-align: middle;
+    margin-bottom: 2px;
+}
+#top_info>span {
+	float: left;
+	line-height: 60px;
+	margin-left: 5px;
+}
+#top_info:hover #nav-child-bg {
+	height: 120px;
+}
+#nav-child-bg {
+	z-index: 1001;
+	position: absolute;
+    left: 0px;
+    top: 60px;
+    width: 98px;
+	height: 0px;
+	overflow: hidden;
+	-webkit-transition-property: top,height;/* 设置动画属性  */
+    transition-property: top,height;
+    -webkit-transition-duration: .4s; /* 0.1s展开30像素 */
+    transition-duration: .4s;
+}
+#top_info:hover .nav-child {
+	top: 0px;
+}
+.nav-child {
+    padding: 5px 0;  
+	box-shadow: 0 2px 4px rgba(0,0,0,.12);
+    border: 1px solid #d2d2d2;
+    background-color: #fff;
+    z-index: 100;
+    border-radius: 2px;
+    white-space: nowrap;
+    margin: 0px;
+    position: relative;
+    top: -180px; /* 通过设置内容top:-180px与容器的height:120px，让菜单面板产生从上往下滑动效果  */
+    -webkit-transition-property: top,height;/* 设置动画属性  */
+    transition-property: top,height;
+    -webkit-transition-duration: .6s; /* 0.1s下滑30像素 */
+    transition-duration: .6s;
+}
+.nav-child>dd {
+	line-height: 36px;
+	margin: 0px;
+	text-align: center;
+	cursor: pointer;
+}
+.nav-child>dd:hover {
+	background-color: #EDEDED; 
+}
+.nav-child>dd:hover a{
+	color: rgba(41,122,202);
+}
+.nav-child>dd>a {
+	text-decoration: none;
+	color: #0A0A0A;
+}
+.more {
+	content: '';
+    width: 0;
+    height: 0;
+    border-style: solid dashed dashed;
+    border-color: #fff transparent transparent;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all .2s;
+    -webkit-transition: all .2s;
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    margin-top: -3px;
+    border-width: 6px;
+    border-top-color: rgba(255,255,255,.7);
+}
+
+/* 主体内容 */
+#body {
+	position: relative;
+}
+
+/* --------------------自定义样式区域Start------------------------*/
+
+
+
+
+
+
+
+
+
+

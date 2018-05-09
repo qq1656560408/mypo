@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mz.mapper.CheckUnitMaterialTemTableMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.mz.entity.CheckUnitMaterialTemTable">
+		<id column="checkUnitMaterialTemID" property="checkUnitMaterialTemID" />
+		<result column="checkUnitID" property="checkUnitID" />
+		<result column="projectMC" property="projectMC" />
+		<result column="checkDemand" property="checkDemand" />
+	</resultMap>
+    
+    <select id="selectUnitMaterial" resultType="com.mz.entity.CheckUnitMaterialTemTable">
+      select check_unit_material_tem_table.projectMC,check_unit_material_tem_table.checkDemand from check_unit_material_tem_table
+    </select>
+      
+</mapper>

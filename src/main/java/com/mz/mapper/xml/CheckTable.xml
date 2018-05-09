@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mz.mapper.CheckTableMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.mz.entity.CheckTable">
+		<id column="checkID" property="checkID" />
+		<result column="projectMC" property="projectMC" />
+		<result column="checkDemand" property="checkDemand" />
+		<result column="checkTime" property="checkTime" />
+		<result column="reviewTime" property="reviewTime" />
+		<result column="reviewScore" property="reviewScore" />
+		<result column="applicant" property="applicant" />
+		<result column="auditor" property="auditor" />
+		<result column="auditNo" property="auditNo" />
+		<result column="remarks" property="remarks" />
+	</resultMap>
+     <!-- 新增CheckTable表（返回id） -->
+     <insert id="insertCheckTable" parameterType="com.mz.entity.CheckTable">
+     <selectKey keyProperty="checkID" order="AFTER" resultType="java.lang.Integer">  
+            SELECT LAST_INSERT_ID()  
+        </selectKey>  
+		insert into check_table
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="checkID != null">
+				CheckID,
+			</if>
+			<if test="projectMC != null">
+				ProjectMC,
+			</if>
+			<if test="checkDemand != null">
+				CheckDemand,
+			</if>
+			<if test="checkTime != null">
+				CheckTime,
+			</if>
+			<if test="reviewTime != null">
+				ReviewTime,
+			</if>
+			<if test="reviewScore != null">
+				ReviewScore,
+			</if>
+			<if test="applicant != null">
+				Applicant,
+			</if>
+			<if test="auditor != null">
+				Auditor,
+			</if>
+			<if test="auditNo != null">
+				AuditNo,
+			</if>
+			<if test="remarks != null">
+				remarks,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="checkID != null">
+				#{checkID,jdbcType=INTEGER},
+			</if>
+			<if test="projectMC != null">
+				#{projectMC,jdbcType=VARCHAR},
+			</if>
+			<if test="checkDemand != null">
+				#{checkDemand,jdbcType=VARCHAR},
+			</if>
+			<if test="checkTime != null">
+				#{checkTime,jdbcType=VARCHAR},
+			</if>
+			<if test="reviewTime != null">
+				#{reviewTime,jdbcType=VARCHAR},
+			</if>
+			<if test="reviewScore != null">
+				#{reviewScore,jdbcType=DOUBLE},
+			</if>
+			<if test="applicant != null">
+				#{applicant,jdbcType=INTEGER},
+			</if>
+			<if test="auditor != null">
+				#{auditor,jdbcType=INTEGER},
+			</if>
+			<if test="auditNo != null">
+				#{auditNo,jdbcType=INTEGER},
+			</if>
+			<if test="remarks != null">
+				#{remarks,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<!-- 查询考核/审核 -->
+	<select id="selectWaitExamine" resultType="com.mz.vo.selectWaitExamine">
+	SELECT check_table.* FROM check_table WHERE check_table.auditNo=#{auditNo} LIMIT #{page},#{num}
+	</select>
+	
+	<!-- 按分数查询考核/审核 -->
+	<select id="selectWaitExamineBYScore" resultType="com.mz.vo.selectWaitExamine">
+	SELECT check_table.* FROM check_table WHERE check_table.auditNo=1 AND check_table.reviewScore BETWEEN #{low} AND #{tall} LIMIT #{page},#{num}
+	</select>
+	
+	<!-- 查询总数量 -->
+	<select id="selectWaitExamineNUM" resultType="java.lang.Integer">
+	SELECT SUM(1) FROM check_table where check_table.auditNo=#{auditNo}
+	</select>
+	
+	<!-- 查询待考核审核 （去重）-->
+	<select id="selectAlreadyWaitExamine" resultType="com.mz.vo.selectWaitExamine">
+	SELECT DISTINCT check_table.checkTime,check_unit_table.checkUnitMC,check_table.checkUnitID FROM check_table JOIN check_unit_table ON check_table.checkUnitID=check_unit_table.checkUnitID WHERE check_table.auditNo=1 LIMIT #{page},#{num}
+	</select>
+	
+	<!-- 查询待考核审核明细-->
+	<select id="selectWaitExamineDetail" resultType="com.mz.vo.selectWaitExamine">
+	SELECT check_table.* FROM check_table WHERE check_table.checkID=#{checkID} 
+	</select>
+	
+	<!-- 审核 -->
+	<update id="updateWaitExamineDetail" parameterType="com.mz.entity.CheckTable">
+    UPDATE check_table SET check_table.reviewScore=#{reviewScore},check_table.reviewTime=#{reviewTime} ,check_table.auditor=#{auditor},check_table.auditNo=1  WHERE check_table.checkID=#{checkID}
+    </update>
+    
+    <!-- 查询个人记录 -->
+     <select id="selectPersonalRecord" resultType="com.mz.entity.CheckTable">
+     SELECT check_table.* from check_table where check_table.applicant=#{applicant} and check_table.auditNo=#{auditNo1} or check_table.auditNo=#{auditNo2} limit #{page},#{num}
+     </select>
+     
+     <!-- 查询个人记录条数 -->
+     <select id="selectPersonalRecordNUM" resultType="java.lang.Integer">
+     SELECT SUM(1) from check_table where check_table.applicant=#{applicant} and check_table.auditNo=#{auditNo1} or check_table.auditNo=#{auditNo2}
+     </select>
+     
+     <!-- 查询提交的申请信息（group by申请时间去重） -->
+     <select id="selectApplication" resultType="com.mz.vo.selectApplication">
+     SELECT check_table.* FROM check_table GROUP BY check_table.checkTime LIMIT #{page},#{num}
+     </select>
+     
+      <!-- 查询提交的申请信息（group by申请时间去重） -->
+     <select id="selectApplicationNUM" resultType="java.lang.Integer">
+     SELECT SUM(1) FROM (SELECT * FROM check_table GROUP BY check_table.checkTime)check_table
+     </select>
+     
+     <!-- 查询提交的申请信息已审核数量by checkTime -->
+     <select id="selectJDBycheckTime" resultType="com.mz.vo.selectApplication">
+     SELECT (SELECT COUNT(*) FROM check_table WHERE check_table.checkTime=#{checkTime} AND check_table.auditNo=1) AS auditingNum,(SELECT COUNT(*) FROM check_table WHERE check_table.checkTime=#{checkTime})AS z_sum FROM check_table GROUP BY z_sum 
+     </select>
+     
+     <!-- 查询指标项目（全部）（根据id获取时间，在根据时间获取全部） -->
+     <select id="selectApplicationDetail" resultType="com.mz.vo.selectApplication">
+     SELECT check_table.* FROM check_table WHERE check_table.checkTime=(SELECT check_table.checkTime FROM check_table WHERE check_table.checkID=#{checkID})
+     </select>
+     
+</mapper>

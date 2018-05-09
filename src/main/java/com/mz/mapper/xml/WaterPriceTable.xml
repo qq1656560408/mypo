@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mz.mapper.WaterPriceTableMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.mz.entity.WaterPriceTable">
+		<id column="waterPriceID" property="waterPriceID" />
+		<result column="waterTypeAndFeaturesID" property="waterTypeAndFeaturesID" />
+		<result column="price" property="price" />
+		<result column="coefficient" property="coefficient" />
+		<result column="unit" property="unit" />
+		<result column="remark" property="remark" />
+	</resultMap>
+
+
+	<insert id="insertByExcle" useGeneratedKeys="true"
+		parameterType="java.util.List">
+		insert into
+		water_price_table(waterTypeAndFeaturesID,price,coefficient,remark,unit)
+		values
+		<foreach collection="list" item="wpt" index="index" separator=",">
+			(#{wpt.waterTypeAndFeaturesID},#{wpt.price},#{wpt.coefficient},#{wpt.remark},#{wpt.unit})
+		</foreach>
+	</insert>
+
+	<select id="selectPriceTableLimit" resultType="com.mz.vo.ShowWaterPrice">
+		select water_price_table.waterPriceID,year_table.yearMC,water_type_table.waterTypeMC,
+		water_typeand_features_table.waterFeatures,area_table.areaMC,
+		water_price_table.price,water_price_table.unit,
+		water_price_table.coefficient,water_price_table.remark
+
+		from water_price_table
+		join water_typeand_features_table on
+		water_price_table.waterTypeAndFeaturesID
+		= water_typeand_features_table.waterTypeAndFeaturesID
+		join area_table on water_typeand_features_table.areaID=area_table.areaID
+		join water_type_table on
+		water_typeand_features_table.waterTypeID=water_type_table.waterTypeID
+		join year_table on
+		water_typeand_features_table.yearID=year_table.yearID
+		limit #{begin},#{size}
+	</select>
+	
+	<select id="selectWaterPrice" resultType="com.mz.entity.WaterPriceTable">
+	select * from water_price_table where waterTypeAndFeaturesID=#{waterTypeAndFeaturesID}
+	</select>
+	
+	<delete id="deleteByID">
+	delete from water_price_table where waterPriceID=#{waterPriceID}
+	</delete>
+	
+	
+	<select id="selectByID" resultType="com.mz.vo.ShowWaterPrice">
+	    select water_price_table.waterPriceID,year_table.yearMC,water_type_table.waterTypeMC,
+		water_typeand_features_table.waterFeatures,area_table.areaMC,
+		water_price_table.price,water_price_table.unit,
+		water_price_table.coefficient,water_price_table.remark
+
+		from water_price_table
+		join water_typeand_features_table on
+		water_price_table.waterTypeAndFeaturesID
+		= water_typeand_features_table.waterTypeAndFeaturesID
+		join area_table on water_typeand_features_table.areaID=area_table.areaID
+		join water_type_table on
+		water_typeand_features_table.waterTypeID=water_type_table.waterTypeID
+		join year_table on
+		water_typeand_features_table.yearID=year_table.yearID
+		where waterPriceID=#{waterPriceID}
+	</select>
+	
+	<update id="updatePrice">
+	    update water_price_table set 
+	    price=#{wpt.price},coefficient=#{wpt.coefficient},remark=#{wpt.remark},unit=#{wpt.unit}
+	    where waterPriceID=#{wpt.waterPriceID}
+	</update>
+
+</mapper>

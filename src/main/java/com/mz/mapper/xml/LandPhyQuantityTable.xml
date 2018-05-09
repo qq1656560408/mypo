@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mz.mapper.LandPhyQuantityTableMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.mz.entity.LandPhyQuantityTable">
+		<id column="landID" property="landID" />
+		<result column="typeAndFeaturesID" property="typeAndFeaturesID" />
+		<result column="inventory" property="inventory" />
+		<result column="inventoryUnit" property="inventoryUnit" />
+		<result column="remark" property="remark" />
+	</resultMap>
+
+	<select id="selectPhyQuantity" resultType="com.mz.entity.LandPhyQuantityTable">
+		select * from
+		land_phy_quantity_table where
+		typeAndFeaturesID=#{typeAndFeaturesID}
+	</select>
+	
+	
+	<!-- excel导入 -->
+	<insert id="insertPhyQuantityExcel">
+		insert into
+		land_phy_quantity_table(typeAndFeaturesID,inventory,inventoryUnit,remark)
+		values
+		<foreach collection="list" item="lang" index="index"
+			separator=",">
+			(#{lang.typeAndFeaturesID},#{lang.inventory},#{lang.inventoryUnit},#{lang.remark})
+		</foreach>
+	</insert>
+
+
+
+	<!-- 分页查询 -->
+	<select id="selectPhyQuantityLimit" resultType="com.mz.vo.ShowLangPhyQuantity">
+
+		select
+		land_phy_quantity_table.landID,year_table.yearMC,water_type_table.waterTypeMC,
+		water_typeand_features_table.waterFeatures,area_table.areaMC,
+		land_phy_quantity_table.inventory,land_phy_quantity_table.inventoryUnit,land_phy_quantity_table.typeAndFeaturesID,
+		land_phy_quantity_table.remark
+
+		from land_phy_quantity_table
+		join
+		water_typeand_features_table on
+		land_phy_quantity_table.typeAndFeaturesID
+		=
+		water_typeand_features_table.waterTypeAndFeaturesID
+		join area_table on
+		water_typeand_features_table.areaID=area_table.areaID
+
+		join
+		water_type_table on
+		water_typeand_features_table.waterTypeID=water_type_table.waterTypeID
+		join year_table on
+		water_typeand_features_table.yearID=year_table.yearID
+		limit
+		#{begin},#{size}
+	</select>
+
+	<!-- 新增 -->
+	<insert id="insertPhyQuantity">
+		insert into land_phy_quantity_table
+		(typeAndFeaturesID,inventory,inventoryUnit,remark)
+		values(#{lang.typeAndFeaturesID},#{lang.inventory},#{lang.inventoryUnit},#{lang.remark})
+	</insert>
+
+	<!-- 删除 -->
+	<delete id="deleteByID">
+		delete from land_phy_quantity_table where
+		landID=#{id}
+	</delete>
+
+	<!-- 修改 -->
+	<update id="updatePhyQuantity">
+		update land_phy_quantity_table
+		set 
+		inventory=#{lang.inventory},inventoryUnit=#{lang.inventoryUnit},remark=#{lang.remark}
+		where landID=#{lang.landID}
+	</update>
+
+	<!-- 通过id查询 -->
+	<select id="selectByID" resultType="com.mz.vo.ShowLangPhyQuantity">
+		select
+		land_phy_quantity_table.landID,year_table.yearMC,water_type_table.waterTypeMC,land_phy_quantity_table.typeAndFeaturesID,
+		water_typeand_features_table.waterFeatures,area_table.areaMC,
+		land_phy_quantity_table.inventory,land_phy_quantity_table.inventoryUnit,
+		land_phy_quantity_table.remark
+
+		from land_phy_quantity_table
+		join
+		water_typeand_features_table on
+		land_phy_quantity_table.typeAndFeaturesID
+		=
+		water_typeand_features_table.waterTypeAndFeaturesID
+		join area_table on
+		water_typeand_features_table.areaID=area_table.areaID
+
+		join
+		water_type_table on
+		water_typeand_features_table.waterTypeID=water_type_table.waterTypeID
+		join year_table on
+		water_typeand_features_table.yearID=year_table.yearID
+		where
+		landID=#{id}
+	</select>
+
+</mapper>

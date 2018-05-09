@@ -1,0 +1,56 @@
+.layui-form-item .layui-inline {
+	margin-right: 0px;
+	margin-bottom: 0px;
+}
+
+.layui-colla-title {
+	height: 38px;
+	line-height: 38px;
+}
+
+.layui-colla-content {
+	padding: 0px 0px;
+}
+
+.layui-table, .layui-table-view {
+	margin-top: 1px;
+}
+
+.layui-table td, .layui-table th {
+	padding: 0;
+	text-align: center;
+}
+
+.layui-form {
+	text-align: center;
+	overflow-y: auto;
+}
+
+.layui-colla-content {
+	margin-bottom: 7px;
+}
+
+.layui-carousel-ind {
+	display: none;
+}
+
+#test1 div {
+	background: #FFFFFF;
+}
+
+.btn_next {
+	margin: auto;
+	margin-top: 15px;
+}
+
+.layui-inline {
+	margin-right:10px;
+}
+
+.layui-carousel>[carousel-item]>*{
+height:auto;
+}
+
+.btn_next{
+margin-bottom: 10px;
+}

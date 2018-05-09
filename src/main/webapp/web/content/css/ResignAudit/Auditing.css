@@ -1,0 +1,45 @@
+html,body{
+	height:100%;
+}
+
+#tab_Audtiting {
+	font-size:14px;
+	width: 80%;
+	margin: 0.5% auto 0.5% auto;
+}
+
+#tab_Audtiting td{
+	font-size:14px;
+	text-align: center;
+	padding: 2px 15px;
+}
+
+#tab_Audtiting th{
+	font-size:14px;
+	text-align: center;
+	padding: 10px 5px;
+}
+
+.layui-btn-sm {
+	height: 25px;
+	line-height: 25px;
+}
+
+.layui-table-page {
+	margin: auto;
+	width: 80%;
+}
+
+#layerDemo .layui-btn{
+margin:3px 0px;
+}
+
+#layui-form-type{
+	width:80%;
+	margin:auto;
+	margin-top:2%;
+}
+
+.layui-layer-btn{
+	padding-top:0!important;
+	}

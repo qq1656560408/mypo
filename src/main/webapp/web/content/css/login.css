@@ -1,0 +1,17 @@
+@CHARSET "UTF-8";
+
+body {
+  margin: 0px;
+	padding: 0px;
+	overflow: hidden; /* 去掉滚动条 */
+}
+
+.loginBtn {
+  cursor: pointer;
+  -webkit-transition: all .3s;
+}
+.loginBtn:hover {  
+  background-color: #037BAB;
+}
+
+

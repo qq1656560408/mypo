@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mz.mapper.AreaTableMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.mz.entity.AreaTable">
+		<id column="areaID" property="areaID" />
+		<result column="areaMC" property="areaMC" />
+	</resultMap>
+
+	<select id="selectAreaMessage" resultType="com.mz.vo.SelectAreaMessage">
+		<if test='areaID == "0" '>
+			SELECT areaID
+			,res,yearID,yearMC,
+			SUM(amountValue)as amountValue from
+			(
+		</if>
+		SELECT areaID
+		,res,year_table.yearID,year_table.yearMC,convert(amountValue/100000000,decimal(20,5))AS
+		amountValue FROM (SELECT typeAndFeatures.areaID,'水' as res,yearID,
+		SUM(water_phy_quantity_table.inventory*water_price_table.coefficient*water_price_table.price)
+		AS amountValue
+		FROM (select * from water_typeand_features_table
+		<if test='areaID != "0" '>
+			where
+			water_typeand_features_table.areaID=#{areaID}
+		</if>
+		)as typeAndFeatures
+		INNER JOIN water_phy_quantity_table ON
+		typeAndFeatures.waterTypeAndFeaturesID =
+		water_phy_quantity_table.waterTypeAndFeaturesID
+		INNER JOIN
+		water_price_table ON typeAndFeatures.waterTypeAndFeaturesID =
+		water_price_table.waterTypeAndFeaturesID
+		GROUP BY
+		typeAndFeatures.areaID,yearID
+
+		UNION all
+
+		SELECT
+		typeAndFeatures.areaID,'土地' as res,yearID,
+		SUM(land_phy_quantity_table.inventory*land_price_table.coefficient*land_price_table.price)
+		AS amountValue
+		FROM (select * from water_typeand_features_table
+		<if test='areaID != "0" '>
+			where
+			water_typeand_features_table.areaID=#{areaID}
+		</if>
+		)as typeAndFeatures
+		INNER JOIN land_phy_quantity_table ON
+		typeAndFeatures.waterTypeAndFeaturesID =
+		land_phy_quantity_table.typeAndFeaturesID
+		INNER JOIN land_price_table
+		ON typeAndFeatures.waterTypeAndFeaturesID =
+		land_price_table.typeAndFeaturesID
+		GROUP BY
+		typeAndFeatures.areaID,yearID
+
+		UNION all
+
+		SELECT
+		typeAndFeatures.areaID,'林木' as res,yearID,
+		SUM(forest_phy_quantity_table.inventory*forest_price_table.coefficient*forest_price_table.price)
+		AS amountValue
+		FROM (select * from water_typeand_features_table
+		<if test='areaID != "0" '>
+			where
+			water_typeand_features_table.areaID=#{areaID}
+		</if>
+		)as typeAndFeatures
+		INNER JOIN forest_phy_quantity_table ON
+		typeAndFeatures.waterTypeAndFeaturesID =
+		forest_phy_quantity_table.typeAndFeaturesID
+		INNER JOIN
+		forest_price_table ON typeAndFeatures.waterTypeAndFeaturesID =
+		forest_price_table.typeAndFeaturesID
+		GROUP BY
+		typeAndFeatures.areaID,yearID
+
+		UNION all
+
+		SELECT
+		typeAndFeatures.areaID,'矿产' as res,yearID,
+		SUM(mine_phy_quantity_table.inventory*mine_price_table.coefficient*mine_price_table.price)
+		AS amountValue
+		FROM (select * from water_typeand_features_table
+		<if test='areaID != "0" '>
+			where
+			water_typeand_features_table.areaID=#{areaID}
+		</if>
+		)as typeAndFeatures
+		INNER JOIN mine_phy_quantity_table ON
+		typeAndFeatures.waterTypeAndFeaturesID =
+		mine_phy_quantity_table.typeAndFeaturesID
+		INNER JOIN mine_price_table
+		ON typeAndFeatures.waterTypeAndFeaturesID =
+		mine_price_table.typeAndFeaturesID
+		GROUP BY
+		typeAndFeatures.areaID,yearID
+
+		UNION all
+
+		SELECT
+		typeAndFeatures.areaID,'可再生能源' as res,yearID,
+		SUM(renewable_phy_quantity_table.inventory*renewable_price_table.coefficient*renewable_price_table.price)
+		AS amountValue
+		FROM (select * from water_typeand_features_table
+		<if test='areaID != "0" '>
+			where
+			water_typeand_features_table.areaID=#{areaID}
+		</if>
+		)as typeAndFeatures
+		INNER JOIN renewable_phy_quantity_table ON
+		typeAndFeatures.waterTypeAndFeaturesID =
+		renewable_phy_quantity_table.typeAndFeaturesID
+		INNER JOIN
+		renewable_price_table ON typeAndFeatures.waterTypeAndFeaturesID
+		=
+		renewable_price_table.typeAndFeaturesID
+		GROUP BY typeAndFeatures.areaID
+		,yearID
+
+
+
+		UNION all
+
+		SELECT typeAndFeatures.areaID,'大气' as res,yearID,
+		SUM(atmosphere_phy_quantity_table.inventory*atmosphere_price_table.coefficient*atmosphere_price_table.price)
+		AS amountValue
+		FROM (select * from water_typeand_features_table
+		<if test='areaID != "0" '>
+			where
+			water_typeand_features_table.areaID=#{areaID}
+		</if>
+		)as typeAndFeatures
+		INNER JOIN atmosphere_phy_quantity_table ON
+		typeAndFeatures.waterTypeAndFeaturesID =
+		atmosphere_phy_quantity_table.typeAndFeaturesID
+		INNER JOIN
+		atmosphere_price_table ON typeAndFeatures.waterTypeAndFeaturesID
+		=
+		atmosphere_price_table.typeAndFeaturesID
+		GROUP BY
+		typeAndFeatures.areaID ,yearID) AS RequstCount
+		INNER JOIN year_table ON
+		RequstCount.yearID = year_table.yearID
+		<if test='areaID == "0" '>
+			)as allData
+			GROUP BY res,yearID
+		</if>
+
+	</select>
+</mapper>

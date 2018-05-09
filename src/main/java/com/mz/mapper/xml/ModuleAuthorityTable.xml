@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mz.mapper.ModuleAuthorityTableMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.mz.entity.ModuleAuthorityTable">
+		<id column="moduleAuthorityID" property="moduleAuthorityID" />
+		<result column="moduleAuthority" property="moduleAuthority" />
+		<result column="menuUrl" property="menuUrl" />
+		<result column="assistantID" property="assistantID" />
+	</resultMap>
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMapID" type="com.mz.vo.SelectModuleAuthority">
+		<id column="moduleAuthorityID" property="id" />
+		<result column="moduleAuthority" property="text" />
+		<result column="assistantID" property="assistantID" />
+	</resultMap>
+
+
+	<select id="selectTree" resultType="com.mz.vo.SelectModuleAuthority"
+		resultMap="BaseResultMapID">
+		select * from module_authority_table where
+		assistantID=#{assistantID}
+	</select>
+
+
+	<select id="selectAllModule" resultType="com.mz.entity.ModuleAuthorityTable">
+		select * from module_authority_table where assistantID in
+		<foreach item="assistantID" index="index" collection="assistantIDs"
+			open="(" separator="," close=")">
+			#{assistantID}
+		</foreach>
+	</select>
+
+	<select id="selectAllModuleAll" resultType="com.mz.entity.ModuleAuthorityTable">
+		select * from
+		module_authority_table
+	</select>
+
+	<select id="selectMenu" resultType="com.mz.entity.ModuleAuthorityTable">
+		select * from module_authority_table where moduleAuthorityID in
+		<foreach item="moduleAuthorityID" index="index" collection="moduleAuthorityIDs"
+			open="(" separator="," close=")">
+			#{moduleAuthorityID}
+		</foreach>
+		 and assistantID=#{parentId}
+	</select>
+
+</mapper>

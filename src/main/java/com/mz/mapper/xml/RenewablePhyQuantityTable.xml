@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mz.mapper.RenewablePhyQuantityTableMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.mz.entity.RenewablePhyQuantityTable">
+		<id column="renewableID" property="renewableID" />
+		<result column="typeAndFeaturesID" property="typeAndFeaturesID" />
+		<result column="inventory" property="inventory" />
+		<result column="inventoryUnit" property="inventoryUnit" />
+		<result column="remark" property="remark" />
+	</resultMap>
+
+	<select id="selectPhyQuantity" resultType="com.mz.entity.RenewablePhyQuantityTable">
+		select * from
+		renewable_phy_quantity_table where
+		typeAndFeaturesID=#{typeAndFeaturesID}
+	</select>
+	
+	
+	<!-- excel导入 -->
+	<insert id="insertPhyQuantityExcel">
+		insert into
+		renewable_phy_quantity_table(typeAndFeaturesID,inventory,inventoryUnit,remark)
+		values
+		<foreach collection="list" item="renewable" index="index"
+			separator=",">
+			(#{renewable.typeAndFeaturesID},#{renewable.inventory},#{renewable.inventoryUnit},#{renewable.remark})
+		</foreach>
+	</insert>
+
+
+
+	<!-- 分页查询 -->
+	<select id="selectPhyQuantityLimit" resultType="com.mz.vo.ShowRenewablePhyQuantity">
+
+		select
+		renewable_phy_quantity_table.renewableID,year_table.yearMC,water_type_table.waterTypeMC,
+		water_typeand_features_table.waterFeatures,area_table.areaMC,
+		renewable_phy_quantity_table.inventory,renewable_phy_quantity_table.inventoryUnit,renewable_phy_quantity_table.typeAndFeaturesID,
+		renewable_phy_quantity_table.remark
+
+		from renewable_phy_quantity_table
+		join
+		water_typeand_features_table on
+		renewable_phy_quantity_table.typeAndFeaturesID
+		=
+		water_typeand_features_table.waterTypeAndFeaturesID
+		join area_table on
+		water_typeand_features_table.areaID=area_table.areaID
+
+		join
+		water_type_table on
+		water_typeand_features_table.waterTypeID=water_type_table.waterTypeID
+		join year_table on
+		water_typeand_features_table.yearID=year_table.yearID
+		limit
+		#{begin},#{size}
+	</select>
+
+	<!-- 新增 -->
+	<insert id="insertPhyQuantity">
+		insert into renewable_phy_quantity_table
+		(typeAndFeaturesID,inventory,inventoryUnit,remark)
+		values(#{renewable.typeAndFeaturesID},#{renewable.inventory},#{renewable.inventoryUnit},#{renewable.remark})
+	</insert>
+
+	<!-- 删除 -->
+	<delete id="deleteByID">
+		delete from renewable_phy_quantity_table where
+		renewableID=#{id}
+	</delete>
+
+	<!-- 修改 -->
+	<update id="updatePhyQuantity">
+		update renewable_phy_quantity_table
+		set 
+		inventory=#{renewable.inventory},inventoryUnit=#{renewable.inventoryUnit},remark=#{renewable.remark}
+		where renewableID=#{renewable.renewableID}
+	</update>
+
+	<!-- 通过id查询 -->
+	<select id="selectByID" resultType="com.mz.vo.ShowRenewablePhyQuantity">
+		select
+		renewable_phy_quantity_table.renewableID,year_table.yearMC,water_type_table.waterTypeMC,renewable_phy_quantity_table.typeAndFeaturesID,
+		water_typeand_features_table.waterFeatures,area_table.areaMC,
+		renewable_phy_quantity_table.inventory,renewable_phy_quantity_table.inventoryUnit,
+		renewable_phy_quantity_table.remark
+
+		from renewable_phy_quantity_table
+		join
+		water_typeand_features_table on
+		renewable_phy_quantity_table.typeAndFeaturesID
+		=
+		water_typeand_features_table.waterTypeAndFeaturesID
+		join area_table on
+		water_typeand_features_table.areaID=area_table.areaID
+
+		join
+		water_type_table on
+		water_typeand_features_table.waterTypeID=water_type_table.waterTypeID
+		join year_table on
+		water_typeand_features_table.yearID=year_table.yearID
+		where
+		renewableID=#{id}
+	</select>
+
+</mapper>

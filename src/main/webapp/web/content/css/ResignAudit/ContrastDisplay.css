@@ -1,0 +1,33 @@
+html {
+	width: 100%;
+	height: 100%;
+	/*background: #f2f2f2;*/
+}
+
+#main {
+	background: #ffffff !important;
+	border: 1px solid #DCDCDC;
+	border-radius: 6px;
+	box-shadow: 5px -1px 3px #DCDCDC;
+	margin: auto;
+	margin-top: 2%;
+}
+
+.div_contrast .layui-inline {
+	margin-right: 0px;
+}
+
+.tab_until {
+	margin: auto;
+}
+
+.tab_until tr td {
+	padding: 5px;
+}
+
+#until {
+	width: 30px;
+	background: #ffffff;
+	border: none;
+	padding: 8px 1px;
+}

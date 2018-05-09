@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mz.mapper.MinePhyQuantityTableMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.mz.entity.MinePhyQuantityTable">
+		<result column="mineID" property="mineID" />
+		<result column="typeAndFeaturesID" property="typeAndFeaturesID" />
+		<result column="inventory" property="inventory" />
+		<result column="inventoryUnit" property="inventoryUnit" />
+		<result column="remark" property="remark" />
+	</resultMap>
+
+
+     <select id="selectPhyQuantity" resultType="com.mz.entity.MinePhyQuantityTable">
+		select * from mine_phy_quantity_table where
+		typeAndFeaturesID=#{typeAndFeaturesID}
+	</select>
+
+	<insert id="insertPhyQuantityExcel">
+		insert into
+		mine_phy_quantity_table(typeAndFeaturesID,inventory,inventoryUnit,remark)
+		values
+		<foreach collection="list" item="mpqt" index="index"
+			separator=",">
+			(#{mpqt.typeAndFeaturesID},#{mpqt.inventory},#{mpqt.inventoryUnit},#{mpqt.remark})
+		</foreach>
+	</insert>
+	
+
+	
+
+	<select id="selectPhyQuantityLimit" resultType="com.mz.vo.ShowMinePhyQuantity">
+
+		select
+		mine_phy_quantity_table.mineID,year_table.yearMC,water_type_table.waterTypeMC,
+		water_typeand_features_table.waterFeatures,area_table.areaMC,
+		mine_phy_quantity_table.inventory,mine_phy_quantity_table.inventoryUnit,
+		mine_phy_quantity_table.remark
+
+		from mine_phy_quantity_table
+		join water_typeand_features_table on
+		mine_phy_quantity_table.typeAndFeaturesID
+		= water_typeand_features_table.waterTypeAndFeaturesID
+		join area_table on water_typeand_features_table.areaID=area_table.areaID
+		
+		join water_type_table on
+		water_typeand_features_table.waterTypeID=water_type_table.waterTypeID
+		join year_table on
+		water_typeand_features_table.yearID=year_table.yearID
+		limit #{begin},#{size}
+	</select>
+	
+	
+	<insert id="insertPhyQuantity" >
+	insert into mine_phy_quantity_table (typeAndFeaturesID,inventory,inventoryUnit,remark)
+	values(#{mpqt.typeAndFeaturesID},#{mpqt.inventory},#{mpqt.inventoryUnit},#{mpqt.remark})
+	</insert>
+	
+	<delete id="deleteByID">
+	delete from mine_phy_quantity_table where mineID=#{id}
+	</delete>
+	
+	<update id="updatePhyQuantity">
+	 update mine_phy_quantity_table 
+	 set 
+	 inventory=#{mpqt.inventory},inventoryUnit=#{mpqt.inventoryUnit},remark=#{mpqt.remark}
+	 where mineID=#{mpqt.mineID}
+	</update>
+	
+	<select id="selectByID" resultType="com.mz.vo.ShowMinePhyQuantity">
+	select
+		mine_phy_quantity_table.mineID,year_table.yearMC,water_type_table.waterTypeMC,
+		water_typeand_features_table.waterFeatures,area_table.areaMC,
+		mine_phy_quantity_table.inventory,mine_phy_quantity_table.inventoryUnit,
+		mine_phy_quantity_table.remark
+
+		from mine_phy_quantity_table
+		join water_typeand_features_table on
+		mine_phy_quantity_table.typeAndFeaturesID
+		= water_typeand_features_table.waterTypeAndFeaturesID
+		join area_table on water_typeand_features_table.areaID=area_table.areaID
+		
+		join water_type_table on
+		water_typeand_features_table.waterTypeID=water_type_table.waterTypeID
+		join year_table on
+		water_typeand_features_table.yearID=year_table.yearID
+		 where mineID=#{id}
+	</select>
+
+</mapper>

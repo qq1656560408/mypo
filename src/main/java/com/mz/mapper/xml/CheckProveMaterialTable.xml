@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mz.mapper.CheckProveMaterialTableMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.mz.entity.CheckProveMaterialTable">
+		<id column="checkProveMaterialID" property="checkProveMaterialID" />
+		<result column="checkID" property="checkID" />
+		<result column="OriginalMame" property="OriginalMame" />
+		<result column="ProveMaterialURL" property="ProveMaterialURL" />
+		<result column="remarks" property="remarks" />
+	</resultMap>
+	<!-- 根据审核ID查询证明资料信息 -->
+	<select id="selectCheckProveMaterialBycheckID" resultType="com.mz.entity.CheckProveMaterialTable">
+	select check_prove_material_table.* from check_prove_material_table where check_prove_material_table.checkID=#{checkID}
+	</select>
+	
+	<!-- 修改证明资料信息 -->
+	<update id="updateCheckProveMaterialByURL" parameterType="com.mz.entity.CheckProveMaterialTable">
+	update check_prove_material_table SET check_prove_material_table.ProveMaterialURL=#{ProveMaterialURL},check_prove_material_table.OriginalMame=#{OriginalMame} where check_prove_material_table.ProveMaterialURL=#{OriginalURL}
+	</update>
+	
+	<!-- 删除证明材料信息（根据名称） -->
+	<delete id="deleteCheckProveMaterialByURL" parameterType="java.lang.String">
+	DELETE FROM check_prove_material_table WHERE check_prove_material_table.ProveMaterialURL=#{ProveMaterialURL}
+	</delete>
+
+</mapper>

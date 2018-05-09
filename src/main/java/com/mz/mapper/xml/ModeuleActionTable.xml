@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mz.mapper.ModeuleActionTableMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.mz.entity.ModeuleActionTable">
+		<id column="modeuleActionID" property="modeuleActionID" />
+		<result column="moduleAuthorityID" property="moduleAuthorityID" />
+		<result column="actionUrl" property="actionUrl" />
+		<result column="remark" property="remark" />
+	</resultMap>
+
+	<select id="selectModuleAction" resultType="com.mz.entity.ModeuleActionTable">
+		select * from modeule_action_table where moduleAuthorityID in
+		<foreach item="moduleAuthorityID" index="index" collection="list"
+			open="(" separator="," close=")">
+			#{moduleAuthorityID}
+		</foreach>
+	</select>
+	
+		<select id="selectModuleActionAll" resultType="com.mz.entity.ModeuleActionTable">
+		select * from modeule_action_table 
+	</select>
+</mapper>

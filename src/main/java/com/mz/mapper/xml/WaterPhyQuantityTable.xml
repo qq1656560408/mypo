@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mz.mapper.WaterPhyQuantityTableMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.mz.entity.WaterPhyQuantityTable">
+		<id column="waterPhyQuantityID" property="waterPhyQuantityID" />
+		<result column="waterTypeAndFeaturesID" property="waterTypeAndFeaturesID" />
+		<result column="inventory" property="inventory" />
+		<result column="inventoryUnit" property="inventoryUnit" />
+		<result column="remark" property="remark" />
+	</resultMap>
+
+	<select id="selectPhyQuantity" resultType="com.mz.entity.WaterPhyQuantityTable">
+		select * from water_phy_quantity_table where
+		waterTypeAndFeaturesID=#{waterTypeAndFeaturesID}
+	</select>
+
+	<insert id="insertPhyQuantityExcel">
+		insert into
+		water_phy_quantity_table(waterTypeAndFeaturesID,inventory,inventoryUnit,remark)
+		values
+		<foreach collection="list" item="wpqt" index="index"
+			separator=",">
+			(#{wpqt.waterTypeAndFeaturesID},#{wpqt.inventory},#{wpqt.inventoryUnit},#{wpqt.remark})
+		</foreach>
+	</insert>
+	
+
+	
+
+	<select id="selectPhyQuantityLimit" resultType="com.mz.vo.ShowPhyQuantity">
+
+		select
+		water_phy_quantity_table.waterPhyQuantityID,year_table.yearMC,water_type_table.waterTypeMC,
+		water_typeand_features_table.waterFeatures,area_table.areaMC,
+		water_phy_quantity_table.inventory,water_phy_quantity_table.inventoryUnit,
+		water_phy_quantity_table.remark
+
+		from water_phy_quantity_table
+		join water_typeand_features_table on
+		water_phy_quantity_table.waterTypeAndFeaturesID
+		= water_typeand_features_table.waterTypeAndFeaturesID
+		join area_table on water_typeand_features_table.areaID=area_table.areaID
+		
+		join water_type_table on
+		water_typeand_features_table.waterTypeID=water_type_table.waterTypeID
+		join year_table on
+		water_typeand_features_table.yearID=year_table.yearID
+		limit #{begin},#{size}
+	</select>
+	
+	
+	<insert id="insertPhyQuantity" >
+	insert into water_phy_quantity_table (waterTypeAndFeaturesID,inventory,inventoryUnit,remark)
+	values(#{wpqt.waterTypeAndFeaturesID},#{wpqt.inventory},#{wpqt.inventoryUnit},#{wpqt.remark})
+	</insert>
+	
+	<delete id="deleteByID">
+	delete from water_phy_quantity_table where waterPhyQuantityID=#{id}
+	</delete>
+	
+	<update id="updatePhyQuantity">
+	 update water_phy_quantity_table set
+	 inventory=#{wpqt.inventory},inventoryUnit=#{wpqt.inventoryUnit},remark=#{wpqt.remark}
+	 where waterPhyQuantityID=#{wpqt.waterPhyQuantityID}
+	</update>
+	
+	<select id="selectByID" resultType="com.mz.vo.ShowPhyQuantity">
+	select
+		water_phy_quantity_table.waterPhyQuantityID,year_table.yearMC,water_type_table.waterTypeMC,
+		water_typeand_features_table.waterFeatures,area_table.areaMC,
+		water_phy_quantity_table.inventory,water_phy_quantity_table.inventoryUnit,
+		water_phy_quantity_table.remark
+
+		from water_phy_quantity_table
+		join water_typeand_features_table on
+		water_phy_quantity_table.waterTypeAndFeaturesID
+		= water_typeand_features_table.waterTypeAndFeaturesID
+		join area_table on water_typeand_features_table.areaID=area_table.areaID
+		
+		join water_type_table on
+		water_typeand_features_table.waterTypeID=water_type_table.waterTypeID
+		join year_table on
+		water_typeand_features_table.yearID=year_table.yearID
+		 where waterPhyQuantityID=#{id}
+	</select>
+
+</mapper>

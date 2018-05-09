@@ -1,0 +1,11 @@
+@CHARSET "UTF-8";
+
+input[type="text"] {
+	height: 22px;
+	border: 1px solid #A1A1A1;
+	border-radius: 3px;
+}
+
+
+
+

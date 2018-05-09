@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd"
+	default-lazy-init="true">
+
+
+	<!-- Shiro 拦截 -->
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<!-- shiro的核心安全接口 -->
+		<property name="securityManager" ref="securityManager" />
+		<!-- 登录时的链接 -->
+		<property name="loginUrl" value="/jsp/login.jsp" />
+		<!-- 登录成功时,跳转的链接 -->
+		<property name="successUrl" value="/jsp/Main.jsp" />
+		<!-- 未认证时跳转的链接 -->
+		<!-- <property name="unauthorizedUrl" value="/jsp/login.jsp" /> -->
+
+		<property name="filters">
+			<map>
+				<entry key="authc">
+					<bean
+						class="org.apache.shiro.web.filter.authc.PassThruAuthenticationFilter" />
+				</entry>
+			</map>
+		</property>
+		<property name="filterChainDefinitionMap" ref="chainDefinitionSectionMetaSource" />
+	</bean>
+
+	<bean id="chainDefinitionSectionMetaSource" class="com.mz.util.shiro.FilterChainFactoryBean"></bean>
+
+	<!-- 安全接口 -->
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="realm" ref="userAuthorization" />
+	</bean>
+
+	<!-- 登录认证、授权 -->
+	<bean id="userAuthorization" class="com.mz.util.shiro.UserAuthorizingRealm">
+		<property name="credentialsMatcher" ref="hashedCredentialsMatcher"></property>
+	</bean>
+
+	<!-- 使用springmvc HandlerExceptionResolver接口处理shiro异常 -->
+	<bean class="com.mz.util.shiro.ShiroExceptionHandler"></bean>
+
+	<!-- 密码加密 -->
+	<bean id="hashedCredentialsMatcher"
+		class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+		<!-- 注意：设置的属性值与类 com.mz.util.shiro.ShiroEncryption属性值相同-->
+		<!-- 加密算法的名称 -->
+		<property name="hashAlgorithmName" value="MD5"></property> 
+		<!-- 配置加密的次数 -->
+		<property name="hashIterations" value="2000"></property> 
+	</bean>
+</beans>

@@ -1,0 +1,867 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mz.mapper.WaterTypeandFeaturesTableMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.mz.entity.WaterTypeandFeaturesTable">
+		<id column="waterTypeAndFeaturesID" property="waterTypeAndFeaturesID" />
+		<result column="areaID" property="areaID" />
+		<result column="yearID" property="yearID" />
+		<result column="waterTypeID" property="waterTypeID" />
+		<result column="waterFeatures" property="waterFeatures" />
+	</resultMap>
+	
+	<select id="selectDataIsExist" resultType="com.mz.entity.WaterTypeandFeaturesTable">
+	   select * from water_typeand_features_table 
+	   where areaID=#{wtft.areaID} and yearID=#{wtft.yearID} 
+	   and waterTypeID=#{wtft.waterTypeID} and waterFeatures=#{wtft.waterFeatures}
+	</select>
+
+    <insert id="insertTypeAndFeatures" useGeneratedKeys="true" keyProperty="wtft.waterTypeAndFeaturesID">
+    insert into water_typeand_features_table (areaID,yearID,waterTypeID,waterFeatures)
+		values (#{wtft.areaID},#{wtft.yearID},#{wtft.waterTypeID},#{wtft.waterFeatures})
+    </insert>
+    
+  
+  <!-- 核算对比展示-水资源-各区县实物量查询 -->
+  <select id="findWaterDataAllByCondition" resultType="com.mz.vo.WaterTypeandFeaturesTableVo">
+    SELECT 
+    SUM(CASE WHEN water_typeand_features_table.areaID=1 THEN water_phy_quantity_table.inventory END)AS 'inventory1',
+    SUM(CASE WHEN water_typeand_features_table.areaID=2 THEN water_phy_quantity_table.inventory  END)AS 'inventory2',
+    SUM(CASE WHEN water_typeand_features_table.areaID=3 THEN water_phy_quantity_table.inventory  END)AS 'inventory3',
+    SUM(CASE WHEN water_typeand_features_table.areaID=4 THEN water_phy_quantity_table.inventory  END)AS 'inventory4',
+    SUM(CASE WHEN water_typeand_features_table.areaID=5 THEN water_phy_quantity_table.inventory  END)AS 'inventory5',
+    SUM(CASE WHEN water_typeand_features_table.areaID=6 THEN water_phy_quantity_table.inventory  END)AS 'inventory6',
+    SUM(CASE WHEN water_typeand_features_table.areaID=7 THEN water_phy_quantity_table.inventory  END)AS 'inventory7',
+    SUM(CASE WHEN water_typeand_features_table.areaID=8 THEN water_phy_quantity_table.inventory  END)AS 'inventory8',
+    water_phy_quantity_table.inventoryUnit
+    FROM water_typeand_features_table
+    INNER JOIN water_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID = water_phy_quantity_table.waterTypeAndFeaturesID 
+    WHERE 1=1 
+     <if test="yearID != 0">
+      AND water_typeand_features_table.yearID = #{yearID,jdbcType=INTEGER}
+     </if>
+     <if test="waterTypeID != 0">
+      AND water_typeand_features_table.waterTypeID = #{waterTypeID,jdbcType=INTEGER}
+     </if>
+  </select>
+  
+  <!-- 核算对比展示-水资源-各区县价值量查询 -->
+  <select id="findWaterValueDataAllByCondition" resultType="com.mz.vo.WaterTypeandFeaturesTableVo">
+    SELECT 
+    SUM(CASE WHEN water_typeand_features_table.areaID=1 THEN water_phy_quantity_table.inventory*water_price_table.coefficient*water_price_table.price END)AS 'inventory1',
+    SUM(CASE WHEN water_typeand_features_table.areaID=2 THEN water_phy_quantity_table.inventory*water_price_table.coefficient*water_price_table.price  END)AS 'inventory2',
+    SUM(CASE WHEN water_typeand_features_table.areaID=3 THEN water_phy_quantity_table.inventory*water_price_table.coefficient*water_price_table.price  END)AS 'inventory3',
+    SUM(CASE WHEN water_typeand_features_table.areaID=4 THEN water_phy_quantity_table.inventory*water_price_table.coefficient*water_price_table.price  END)AS 'inventory4',
+    SUM(CASE WHEN water_typeand_features_table.areaID=5 THEN water_phy_quantity_table.inventory*water_price_table.coefficient*water_price_table.price  END)AS 'inventory5',
+    SUM(CASE WHEN water_typeand_features_table.areaID=6 THEN water_phy_quantity_table.inventory*water_price_table.coefficient*water_price_table.price  END)AS 'inventory6',
+    SUM(CASE WHEN water_typeand_features_table.areaID=7 THEN water_phy_quantity_table.inventory*water_price_table.coefficient*water_price_table.price  END)AS 'inventory7',
+    SUM(CASE WHEN water_typeand_features_table.areaID=8 THEN water_phy_quantity_table.inventory*water_price_table.coefficient*water_price_table.price  END)AS 'inventory8',
+    '元' AS inventoryUnit
+    FROM water_typeand_features_table
+    INNER JOIN water_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID = water_phy_quantity_table.waterTypeAndFeaturesID
+    JOIN water_price_table ON water_typeand_features_table.waterTypeAndFeaturesID = water_price_table.waterTypeAndFeaturesID
+    WHERE 1=1 
+     <if test="yearID != 0">
+      AND water_typeand_features_table.yearID = #{yearID,jdbcType=INTEGER}
+     </if>
+     <if test="waterTypeID != 0">
+      AND water_typeand_features_table.waterTypeID = #{waterTypeID,jdbcType=INTEGER}
+     </if>
+  </select>
+  
+  <!-- 核算对比展示-土地资源-各区县价值量查询 -->
+  <select id="findLandValueDataAllByCondition" resultType="com.mz.vo.WaterTypeandFeaturesTableVo">
+    SELECT 
+    SUM(CASE WHEN water_typeand_features_table.areaID=1 THEN land_phy_quantity_table.inventory*land_price_table.coefficient*land_price_table.price END)AS 'inventory1',
+    SUM(CASE WHEN water_typeand_features_table.areaID=2 THEN land_phy_quantity_table.inventory*land_price_table.coefficient*land_price_table.price  END)AS 'inventory2',
+    SUM(CASE WHEN water_typeand_features_table.areaID=3 THEN land_phy_quantity_table.inventory*land_price_table.coefficient*land_price_table.price  END)AS 'inventory3',
+    SUM(CASE WHEN water_typeand_features_table.areaID=4 THEN land_phy_quantity_table.inventory*land_price_table.coefficient*land_price_table.price  END)AS 'inventory4',
+    SUM(CASE WHEN water_typeand_features_table.areaID=5 THEN land_phy_quantity_table.inventory*land_price_table.coefficient*land_price_table.price  END)AS 'inventory5',
+    SUM(CASE WHEN water_typeand_features_table.areaID=6 THEN land_phy_quantity_table.inventory*land_price_table.coefficient*land_price_table.price  END)AS 'inventory6',
+    SUM(CASE WHEN water_typeand_features_table.areaID=7 THEN land_phy_quantity_table.inventory*land_price_table.coefficient*land_price_table.price  END)AS 'inventory7',
+    SUM(CASE WHEN water_typeand_features_table.areaID=8 THEN land_phy_quantity_table.inventory*land_price_table.coefficient*land_price_table.price  END)AS 'inventory8',
+    '元' AS inventoryUnit
+    FROM water_typeand_features_table
+    INNER JOIN land_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID = land_phy_quantity_table.typeAndFeaturesID
+    JOIN land_price_table ON water_typeand_features_table.waterTypeAndFeaturesID = land_price_table.typeAndFeaturesID
+    WHERE 1=1 
+     <if test="yearID != 0">
+      AND water_typeand_features_table.yearID = #{yearID,jdbcType=INTEGER}
+     </if>
+     <if test="waterTypeID != 0">
+      AND water_typeand_features_table.waterTypeID = #{waterTypeID,jdbcType=INTEGER}
+     </if>
+  </select>
+  
+  <!-- 核算对比展示-林木资源-各区县价值量查询 -->
+  <select id="findForestValueDataAllByCondition" resultType="com.mz.vo.WaterTypeandFeaturesTableVo">
+    SELECT 
+    SUM(CASE WHEN water_typeand_features_table.areaID=1 THEN forest_phy_quantity_table.inventory*forest_price_table.coefficient*forest_price_table.price END)AS 'inventory1',
+    SUM(CASE WHEN water_typeand_features_table.areaID=2 THEN forest_phy_quantity_table.inventory*forest_price_table.coefficient*forest_price_table.price  END)AS 'inventory2',
+    SUM(CASE WHEN water_typeand_features_table.areaID=3 THEN forest_phy_quantity_table.inventory*forest_price_table.coefficient*forest_price_table.price  END)AS 'inventory3',
+    SUM(CASE WHEN water_typeand_features_table.areaID=4 THEN forest_phy_quantity_table.inventory*forest_price_table.coefficient*forest_price_table.price  END)AS 'inventory4',
+    SUM(CASE WHEN water_typeand_features_table.areaID=5 THEN forest_phy_quantity_table.inventory*forest_price_table.coefficient*forest_price_table.price  END)AS 'inventory5',
+    SUM(CASE WHEN water_typeand_features_table.areaID=6 THEN forest_phy_quantity_table.inventory*forest_price_table.coefficient*forest_price_table.price  END)AS 'inventory6',
+    SUM(CASE WHEN water_typeand_features_table.areaID=7 THEN forest_phy_quantity_table.inventory*forest_price_table.coefficient*forest_price_table.price  END)AS 'inventory7',
+    SUM(CASE WHEN water_typeand_features_table.areaID=8 THEN forest_phy_quantity_table.inventory*forest_price_table.coefficient*forest_price_table.price  END)AS 'inventory8',
+    '元' AS inventoryUnit
+    FROM water_typeand_features_table
+    INNER JOIN forest_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID = forest_phy_quantity_table.typeAndFeaturesID
+    JOIN forest_price_table ON water_typeand_features_table.waterTypeAndFeaturesID = forest_price_table.typeAndFeaturesID
+    WHERE 1=1 
+     <if test="yearID != 0">
+      AND water_typeand_features_table.yearID = #{yearID,jdbcType=INTEGER}
+     </if>
+     <if test="waterTypeID != 0">
+      AND water_typeand_features_table.waterTypeID = #{waterTypeID,jdbcType=INTEGER}
+     </if>
+  </select>
+  
+  <!-- 核算对比展示-矿产资源-各区县价值量查询 -->
+  <select id="findMineValueDataAllByCondition" resultType="com.mz.vo.WaterTypeandFeaturesTableVo">
+    SELECT 
+    SUM(CASE WHEN water_typeand_features_table.areaID=1 THEN mine_phy_quantity_table.inventory*mine_price_table.coefficient*mine_price_table.price END)AS 'inventory1',
+    SUM(CASE WHEN water_typeand_features_table.areaID=2 THEN mine_phy_quantity_table.inventory*mine_price_table.coefficient*mine_price_table.price  END)AS 'inventory2',
+    SUM(CASE WHEN water_typeand_features_table.areaID=3 THEN mine_phy_quantity_table.inventory*mine_price_table.coefficient*mine_price_table.price  END)AS 'inventory3',
+    SUM(CASE WHEN water_typeand_features_table.areaID=4 THEN mine_phy_quantity_table.inventory*mine_price_table.coefficient*mine_price_table.price  END)AS 'inventory4',
+    SUM(CASE WHEN water_typeand_features_table.areaID=5 THEN mine_phy_quantity_table.inventory*mine_price_table.coefficient*mine_price_table.price  END)AS 'inventory5',
+    SUM(CASE WHEN water_typeand_features_table.areaID=6 THEN mine_phy_quantity_table.inventory*mine_price_table.coefficient*mine_price_table.price  END)AS 'inventory6',
+    SUM(CASE WHEN water_typeand_features_table.areaID=7 THEN mine_phy_quantity_table.inventory*mine_price_table.coefficient*mine_price_table.price  END)AS 'inventory7',
+    SUM(CASE WHEN water_typeand_features_table.areaID=8 THEN mine_phy_quantity_table.inventory*mine_price_table.coefficient*mine_price_table.price  END)AS 'inventory8',
+    '元' AS inventoryUnit
+    FROM water_typeand_features_table
+    INNER JOIN mine_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID = mine_phy_quantity_table.typeAndFeaturesID
+    JOIN mine_price_table ON water_typeand_features_table.waterTypeAndFeaturesID = mine_price_table.typeAndFeaturesID
+    WHERE 1=1 
+     <if test="yearID != 0">
+      AND water_typeand_features_table.yearID = #{yearID,jdbcType=INTEGER}
+     </if>
+     <if test="waterTypeID != 0">
+      AND water_typeand_features_table.waterTypeID = #{waterTypeID,jdbcType=INTEGER}
+     </if>
+  </select>
+  
+  <!-- 核算对比展示-可再生能源-各区县价值量查询 -->
+  <select id="findRenewableValueDataAllByCondition" resultType="com.mz.vo.WaterTypeandFeaturesTableVo">
+    SELECT 
+    SUM(CASE WHEN water_typeand_features_table.areaID=1 THEN renewable_phy_quantity_table.inventory*renewable_price_table.coefficient*renewable_price_table.price END)AS 'inventory1',
+    SUM(CASE WHEN water_typeand_features_table.areaID=2 THEN renewable_phy_quantity_table.inventory*renewable_price_table.coefficient*renewable_price_table.price  END)AS 'inventory2',
+    SUM(CASE WHEN water_typeand_features_table.areaID=3 THEN renewable_phy_quantity_table.inventory*renewable_price_table.coefficient*renewable_price_table.price  END)AS 'inventory3',
+    SUM(CASE WHEN water_typeand_features_table.areaID=4 THEN renewable_phy_quantity_table.inventory*renewable_price_table.coefficient*renewable_price_table.price  END)AS 'inventory4',
+    SUM(CASE WHEN water_typeand_features_table.areaID=5 THEN renewable_phy_quantity_table.inventory*renewable_price_table.coefficient*renewable_price_table.price  END)AS 'inventory5',
+    SUM(CASE WHEN water_typeand_features_table.areaID=6 THEN renewable_phy_quantity_table.inventory*renewable_price_table.coefficient*renewable_price_table.price  END)AS 'inventory6',
+    SUM(CASE WHEN water_typeand_features_table.areaID=7 THEN renewable_phy_quantity_table.inventory*renewable_price_table.coefficient*renewable_price_table.price  END)AS 'inventory7',
+    SUM(CASE WHEN water_typeand_features_table.areaID=8 THEN renewable_phy_quantity_table.inventory*renewable_price_table.coefficient*renewable_price_table.price  END)AS 'inventory8',
+    '元' AS inventoryUnit
+    FROM water_typeand_features_table
+    INNER JOIN renewable_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID = renewable_phy_quantity_table.typeAndFeaturesID
+    JOIN renewable_price_table ON water_typeand_features_table.waterTypeAndFeaturesID = renewable_price_table.typeAndFeaturesID
+    WHERE 1=1 
+     <if test="yearID != 0">
+      AND water_typeand_features_table.yearID = #{yearID,jdbcType=INTEGER}
+     </if>
+     <if test="waterTypeID != 0">
+      AND water_typeand_features_table.waterTypeID = #{waterTypeID,jdbcType=INTEGER}
+     </if>
+  </select>
+  
+  <!-- 核算对比展示-大气资源-各区县价值量查询 -->
+  <select id="findAtmosphereValueDataAllByCondition" resultType="com.mz.vo.WaterTypeandFeaturesTableVo">
+    SELECT 
+    SUM(CASE WHEN water_typeand_features_table.areaID=1 THEN atmosphere_phy_quantity_table.inventory*atmosphere_price_table.coefficient*atmosphere_price_table.price END)AS 'inventory1',
+    SUM(CASE WHEN water_typeand_features_table.areaID=2 THEN atmosphere_phy_quantity_table.inventory*atmosphere_price_table.coefficient*atmosphere_price_table.price  END)AS 'inventory2',
+    SUM(CASE WHEN water_typeand_features_table.areaID=3 THEN atmosphere_phy_quantity_table.inventory*atmosphere_price_table.coefficient*atmosphere_price_table.price  END)AS 'inventory3',
+    SUM(CASE WHEN water_typeand_features_table.areaID=4 THEN atmosphere_phy_quantity_table.inventory*atmosphere_price_table.coefficient*atmosphere_price_table.price  END)AS 'inventory4',
+    SUM(CASE WHEN water_typeand_features_table.areaID=5 THEN atmosphere_phy_quantity_table.inventory*atmosphere_price_table.coefficient*atmosphere_price_table.price  END)AS 'inventory5',
+    SUM(CASE WHEN water_typeand_features_table.areaID=6 THEN atmosphere_phy_quantity_table.inventory*atmosphere_price_table.coefficient*atmosphere_price_table.price  END)AS 'inventory6',
+    SUM(CASE WHEN water_typeand_features_table.areaID=7 THEN atmosphere_phy_quantity_table.inventory*atmosphere_price_table.coefficient*atmosphere_price_table.price  END)AS 'inventory7',
+    SUM(CASE WHEN water_typeand_features_table.areaID=8 THEN atmosphere_phy_quantity_table.inventory*atmosphere_price_table.coefficient*atmosphere_price_table.price  END)AS 'inventory8',
+    '元' AS inventoryUnit
+    FROM water_typeand_features_table
+    INNER JOIN atmosphere_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID = atmosphere_phy_quantity_table.typeAndFeaturesID
+    JOIN atmosphere_price_table ON water_typeand_features_table.waterTypeAndFeaturesID = atmosphere_price_table.typeAndFeaturesID
+    WHERE 1=1 
+     <if test="yearID != 0">
+      AND water_typeand_features_table.yearID = #{yearID,jdbcType=INTEGER}
+     </if>
+     <if test="waterTypeID != 0">
+      AND water_typeand_features_table.waterTypeID = #{waterTypeID,jdbcType=INTEGER}
+     </if>
+  </select>
+  
+  <!-- 核算结果统计表弹窗-价值量总统计-获取有数据的年份 -->
+  <select id="findTypeValueYearByCondition" resultType="com.mz.entity.YearTable">
+    SELECT year_table.yearID,year_table.yearMC
+    FROM water_typeand_features_table
+    JOIN year_table ON water_typeand_features_table.yearID = year_table.yearID
+    GROUP BY water_typeand_features_table.yearID
+  </select>
+  
+  <!-- 核算结果统计表弹窗-价值量总统计 -->
+  <select id="findTypeValueDataByCondition" resultType="com.mz.vo.TypeandFeaturesTableVo">
+    SELECT area_table.areaMC,a.areaID,
+      SUM(waterValue)AS waterValue,
+      SUM(landValue)AS landValue,
+      SUM(forestValue)AS forestValue,
+      SUM(mineValue)AS mineValue,
+      SUM(renewableValue)AS renewableValue,
+      SUM(atmosphereValue)AS atmosphereValue 
+    FROM(
+    SELECT water_typeand_features_table.areaID,
+    SUM(water_phy_quantity_table.inventory*water_price_table.coefficient*water_price_table.price) AS waterValue,
+    0 AS landValue,
+    0 AS forestValue,
+    0 AS mineValue,
+    0 AS renewableValue,
+    0 AS atmosphereValue
+    FROM water_typeand_features_table
+    INNER JOIN water_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID = water_phy_quantity_table.waterTypeAndFeaturesID
+    INNER JOIN water_price_table ON water_typeand_features_table.waterTypeAndFeaturesID = water_price_table.waterTypeAndFeaturesID
+    WHERE 1=1 
+    <if test="yearID != 0">
+      AND water_typeand_features_table.yearID = #{yearID,jdbcType=INTEGER}
+    </if>
+    <if test="waterTypeID != 0">
+      AND water_typeand_features_table.waterTypeID = #{waterTypeID,jdbcType=INTEGER}
+    </if>
+    GROUP BY  water_typeand_features_table.areaID
+    UNION ALL
+    SELECT water_typeand_features_table.areaID,
+    0 AS waterValue,
+    SUM(land_phy_quantity_table.inventory*land_price_table.coefficient*land_price_table.price) AS landValue,
+    0 AS forestValue,
+    0 AS mineValue,
+    0 AS renewableValue,
+    0 AS atmosphereValue
+    FROM water_typeand_features_table
+    INNER JOIN land_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID = land_phy_quantity_table.typeAndFeaturesID
+    INNER JOIN land_price_table ON water_typeand_features_table.waterTypeAndFeaturesID = land_price_table.typeAndFeaturesID
+    WHERE 1=1 
+    <if test="yearID != 0">
+      AND water_typeand_features_table.yearID = #{yearID,jdbcType=INTEGER}
+    </if>
+    <if test="waterTypeID != 0">
+      AND water_typeand_features_table.waterTypeID = #{waterTypeID,jdbcType=INTEGER}
+    </if>
+    GROUP BY  water_typeand_features_table.areaID  
+    UNION ALL
+    SELECT water_typeand_features_table.areaID,
+    0 AS waterValue,
+    0 AS landValue,
+    SUM(forest_phy_quantity_table.inventory*forest_price_table.coefficient*forest_price_table.price) AS forestValue,
+    0 AS mineValue,
+    0 AS renewableValue,
+    0 AS atmosphereValue
+    FROM water_typeand_features_table
+    INNER JOIN forest_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID = forest_phy_quantity_table.typeAndFeaturesID
+    INNER JOIN forest_price_table ON water_typeand_features_table.waterTypeAndFeaturesID = forest_price_table.typeAndFeaturesID
+    WHERE 1=1 
+    <if test="yearID != 0">
+      AND water_typeand_features_table.yearID = #{yearID,jdbcType=INTEGER}
+    </if>
+    <if test="waterTypeID != 0">
+      AND water_typeand_features_table.waterTypeID = #{waterTypeID,jdbcType=INTEGER}
+    </if>
+    GROUP BY  water_typeand_features_table.areaID  
+    UNION ALL
+    SELECT water_typeand_features_table.areaID,
+    0 AS waterValue,
+    0 AS landValue,
+    0 AS forestValue,
+    SUM(mine_phy_quantity_table.inventory*mine_price_table.coefficient*mine_price_table.price) AS mineValue,
+    0 AS renewableValue,
+    0 AS atmosphereValue
+    FROM water_typeand_features_table
+    INNER JOIN mine_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID = mine_phy_quantity_table.typeAndFeaturesID
+    INNER JOIN mine_price_table ON water_typeand_features_table.waterTypeAndFeaturesID = mine_price_table.typeAndFeaturesID
+    WHERE 1=1 
+    <if test="yearID != 0">
+      AND water_typeand_features_table.yearID = #{yearID,jdbcType=INTEGER}
+    </if>
+    <if test="waterTypeID != 0">
+      AND water_typeand_features_table.waterTypeID = #{waterTypeID,jdbcType=INTEGER}
+    </if>
+    GROUP BY  water_typeand_features_table.areaID  
+    UNION ALL
+    SELECT water_typeand_features_table.areaID,
+    0 AS waterValue,
+    0 AS landValue,
+    0 AS forestValue,
+    0 AS mineValue,
+    SUM(renewable_phy_quantity_table.inventory*renewable_price_table.coefficient*renewable_price_table.price) AS renewableValue,
+    0 AS atmosphereValue
+    FROM water_typeand_features_table
+    INNER JOIN renewable_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID = renewable_phy_quantity_table.typeAndFeaturesID
+    INNER JOIN renewable_price_table ON water_typeand_features_table.waterTypeAndFeaturesID = renewable_price_table.typeAndFeaturesID
+    WHERE 1=1 
+    <if test="yearID != 0">
+      AND water_typeand_features_table.yearID = #{yearID,jdbcType=INTEGER}
+    </if>
+    <if test="waterTypeID != 0">
+      AND water_typeand_features_table.waterTypeID = #{waterTypeID,jdbcType=INTEGER}
+    </if>
+    GROUP BY  water_typeand_features_table.areaID  
+    UNION ALL
+    SELECT water_typeand_features_table.areaID,
+    0 AS waterValue,
+    0 AS landValue,
+    0 AS forestValue,
+    0 AS mineValue,
+    0 AS renewableValue,
+    SUM(atmosphere_phy_quantity_table.inventory*atmosphere_price_table.coefficient*atmosphere_price_table.price) AS atmosphereValue
+    FROM water_typeand_features_table
+    INNER JOIN atmosphere_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID = atmosphere_phy_quantity_table.typeAndFeaturesID
+    INNER JOIN atmosphere_price_table ON water_typeand_features_table.waterTypeAndFeaturesID = atmosphere_price_table.typeAndFeaturesID
+    WHERE 1=1 
+    <if test="yearID != 0">
+      AND water_typeand_features_table.yearID = #{yearID,jdbcType=INTEGER}
+    </if>
+    <if test="waterTypeID != 0">
+      AND water_typeand_features_table.waterTypeID = #{waterTypeID,jdbcType=INTEGER}
+    </if>
+    GROUP BY  water_typeand_features_table.areaID  
+    ) a 
+    INNER JOIN area_table ON a.areaID=area_table.areaID
+    GROUP BY areaID
+  </select>
+    
+  <!-- 水资源-获取有数据的年份 -->
+  <select id="findWaterYearByCondition" resultType="com.mz.entity.YearTable">
+    SELECT year_table.yearID,year_table.yearMC
+    FROM water_typeand_features_table
+    JOIN year_table ON water_typeand_features_table.yearID = year_table.yearID
+    INNER JOIN water_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID = water_phy_quantity_table.waterTypeAndFeaturesID
+    GROUP BY water_typeand_features_table.yearID
+  </select>
+    
+  <!-- 核算结果统计表弹窗-水资源明细-实物量明细查询 -->
+  <select id="findWaterDataByCondition" resultType="com.mz.vo.WaterTypeandFeaturesTableVo">
+    SELECT water_typeand_features_table.waterFeatures,
+    SUM(CASE WHEN water_typeand_features_table.areaID=1 THEN water_phy_quantity_table.inventory END)AS 'inventory1',
+    SUM(CASE WHEN water_typeand_features_table.areaID=2 THEN water_phy_quantity_table.inventory  END)AS 'inventory2',
+    SUM(CASE WHEN water_typeand_features_table.areaID=3 THEN water_phy_quantity_table.inventory  END)AS 'inventory3',
+    SUM(CASE WHEN water_typeand_features_table.areaID=4 THEN water_phy_quantity_table.inventory  END)AS 'inventory4',
+    SUM(CASE WHEN water_typeand_features_table.areaID=5 THEN water_phy_quantity_table.inventory  END)AS 'inventory5',
+    SUM(CASE WHEN water_typeand_features_table.areaID=6 THEN water_phy_quantity_table.inventory  END)AS 'inventory6',
+    SUM(CASE WHEN water_typeand_features_table.areaID=7 THEN water_phy_quantity_table.inventory  END)AS 'inventory7',
+    SUM(CASE WHEN water_typeand_features_table.areaID=8 THEN water_phy_quantity_table.inventory  END)AS 'inventory8',
+    water_phy_quantity_table.inventoryUnit
+    FROM water_typeand_features_table
+    INNER JOIN water_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID = water_phy_quantity_table.waterTypeAndFeaturesID 
+    WHERE 1=1 
+     <if test="yearID != 0">
+      AND water_typeand_features_table.yearID = #{yearID,jdbcType=INTEGER}
+     </if>
+     <if test="waterTypeID != 0">
+      AND water_typeand_features_table.waterTypeID = #{waterTypeID,jdbcType=INTEGER}
+     </if>
+     GROUP BY water_typeand_features_table.waterFeatures
+  </select>
+  
+  <!-- 核算结果统计表弹窗-水资源明细-价值量明细查询 -->
+  <select id="findWaterValueDataByCondition" resultType="com.mz.vo.WaterTypeandFeaturesTableVo">
+    SELECT water_typeand_features_table.waterFeatures,
+    SUM(CASE WHEN water_typeand_features_table.areaID=1 THEN water_phy_quantity_table.inventory*water_price_table.coefficient*water_price_table.price END)AS 'inventory1',
+    SUM(CASE WHEN water_typeand_features_table.areaID=2 THEN water_phy_quantity_table.inventory*water_price_table.coefficient*water_price_table.price  END)AS 'inventory2',
+    SUM(CASE WHEN water_typeand_features_table.areaID=3 THEN water_phy_quantity_table.inventory*water_price_table.coefficient*water_price_table.price  END)AS 'inventory3',
+    SUM(CASE WHEN water_typeand_features_table.areaID=4 THEN water_phy_quantity_table.inventory*water_price_table.coefficient*water_price_table.price  END)AS 'inventory4',
+    SUM(CASE WHEN water_typeand_features_table.areaID=5 THEN water_phy_quantity_table.inventory*water_price_table.coefficient*water_price_table.price  END)AS 'inventory5',
+    SUM(CASE WHEN water_typeand_features_table.areaID=6 THEN water_phy_quantity_table.inventory*water_price_table.coefficient*water_price_table.price  END)AS 'inventory6',
+    SUM(CASE WHEN water_typeand_features_table.areaID=7 THEN water_phy_quantity_table.inventory*water_price_table.coefficient*water_price_table.price  END)AS 'inventory7',
+    SUM(CASE WHEN water_typeand_features_table.areaID=8 THEN water_phy_quantity_table.inventory*water_price_table.coefficient*water_price_table.price  END)AS 'inventory8',
+    '元' AS inventoryUnit
+    FROM water_typeand_features_table
+    INNER JOIN water_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID = water_phy_quantity_table.waterTypeAndFeaturesID
+    JOIN water_price_table ON water_typeand_features_table.waterTypeAndFeaturesID = water_price_table.waterTypeAndFeaturesID
+    WHERE 1=1 
+     <if test="yearID != 0">
+      AND water_typeand_features_table.yearID = #{yearID,jdbcType=INTEGER}
+     </if>
+     <if test="waterTypeID != 0">
+      AND water_typeand_features_table.waterTypeID = #{waterTypeID,jdbcType=INTEGER}
+     </if>
+     GROUP BY water_typeand_features_table.waterFeatures
+  </select>
+  
+  <!-- 土地资源-获取有数据的年份 -->
+  <select id="findLandYearByCondition" resultType="com.mz.entity.YearTable">
+    SELECT year_table.yearID,year_table.yearMC
+    FROM water_typeand_features_table
+    JOIN year_table ON water_typeand_features_table.yearID = year_table.yearID
+    INNER JOIN land_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID = land_phy_quantity_table.typeAndFeaturesID 
+    GROUP BY water_typeand_features_table.yearID
+  </select>
+  
+  <!-- 核算结果统计表弹窗-土地资源明细-实物量明细查询 -->
+  <select id="findLandDataByCondition" resultType="com.mz.vo.WaterTypeandFeaturesTableVo">
+    SELECT water_typeand_features_table.waterFeatures,
+    SUM(CASE WHEN water_typeand_features_table.areaID=1 THEN land_phy_quantity_table.inventory END)AS 'inventory1',
+    SUM(CASE WHEN water_typeand_features_table.areaID=2 THEN land_phy_quantity_table.inventory  END)AS 'inventory2',
+    SUM(CASE WHEN water_typeand_features_table.areaID=3 THEN land_phy_quantity_table.inventory  END)AS 'inventory3',
+    SUM(CASE WHEN water_typeand_features_table.areaID=4 THEN land_phy_quantity_table.inventory  END)AS 'inventory4',
+    SUM(CASE WHEN water_typeand_features_table.areaID=5 THEN land_phy_quantity_table.inventory  END)AS 'inventory5',
+    SUM(CASE WHEN water_typeand_features_table.areaID=6 THEN land_phy_quantity_table.inventory  END)AS 'inventory6',
+    SUM(CASE WHEN water_typeand_features_table.areaID=7 THEN land_phy_quantity_table.inventory  END)AS 'inventory7',
+    SUM(CASE WHEN water_typeand_features_table.areaID=8 THEN land_phy_quantity_table.inventory  END)AS 'inventory8',
+    land_phy_quantity_table.inventoryUnit
+    FROM water_typeand_features_table
+    INNER JOIN land_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID = land_phy_quantity_table.typeAndFeaturesID 
+    WHERE 1=1 
+     <if test="yearID != 0">
+      AND water_typeand_features_table.yearID = #{yearID,jdbcType=INTEGER}
+     </if>
+     <if test="waterTypeID != 0">
+      AND water_typeand_features_table.waterTypeID = #{waterTypeID,jdbcType=INTEGER}
+     </if>
+     GROUP BY water_typeand_features_table.waterFeatures
+  </select>
+  
+  <!-- 核算结果统计表弹窗-土地资源明细-价值量明细查询 -->
+  <select id="findLandValueDataByCondition" resultType="com.mz.vo.WaterTypeandFeaturesTableVo">
+    SELECT water_typeand_features_table.waterFeatures,
+    SUM(CASE WHEN water_typeand_features_table.areaID=1 THEN land_phy_quantity_table.inventory*land_price_table.coefficient*land_price_table.price END)AS 'inventory1',
+    SUM(CASE WHEN water_typeand_features_table.areaID=2 THEN land_phy_quantity_table.inventory*land_price_table.coefficient*land_price_table.price  END)AS 'inventory2',
+    SUM(CASE WHEN water_typeand_features_table.areaID=3 THEN land_phy_quantity_table.inventory*land_price_table.coefficient*land_price_table.price  END)AS 'inventory3',
+    SUM(CASE WHEN water_typeand_features_table.areaID=4 THEN land_phy_quantity_table.inventory*land_price_table.coefficient*land_price_table.price  END)AS 'inventory4',
+    SUM(CASE WHEN water_typeand_features_table.areaID=5 THEN land_phy_quantity_table.inventory*land_price_table.coefficient*land_price_table.price  END)AS 'inventory5',
+    SUM(CASE WHEN water_typeand_features_table.areaID=6 THEN land_phy_quantity_table.inventory*land_price_table.coefficient*land_price_table.price  END)AS 'inventory6',
+    SUM(CASE WHEN water_typeand_features_table.areaID=7 THEN land_phy_quantity_table.inventory*land_price_table.coefficient*land_price_table.price  END)AS 'inventory7',
+    SUM(CASE WHEN water_typeand_features_table.areaID=8 THEN land_phy_quantity_table.inventory*land_price_table.coefficient*land_price_table.price  END)AS 'inventory8',
+    '元' AS inventoryUnit
+    FROM water_typeand_features_table
+    INNER JOIN land_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID = land_phy_quantity_table.typeAndFeaturesID
+    JOIN land_price_table ON water_typeand_features_table.waterTypeAndFeaturesID = land_price_table.typeAndFeaturesID
+    WHERE 1=1 
+     <if test="yearID != 0">
+      AND water_typeand_features_table.yearID = #{yearID,jdbcType=INTEGER}
+     </if>
+     <if test="waterTypeID != 0">
+      AND water_typeand_features_table.waterTypeID = #{waterTypeID,jdbcType=INTEGER}
+     </if>
+     GROUP BY water_typeand_features_table.waterFeatures
+  </select>
+  
+  <!-- 林木资源-获取有数据的年份 -->
+  <select id="findForestYearByCondition" resultType="com.mz.entity.YearTable">
+    SELECT year_table.yearID,year_table.yearMC
+    FROM water_typeand_features_table
+    JOIN year_table ON water_typeand_features_table.yearID = year_table.yearID
+    INNER JOIN forest_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID = forest_phy_quantity_table.typeAndFeaturesID 
+    GROUP BY water_typeand_features_table.yearID
+  </select>
+  
+  <!-- 核算结果统计表弹窗-林木资源明细-实物量明细查询 -->
+  <select id="findForestDataByCondition" resultType="com.mz.vo.WaterTypeandFeaturesTableVo">
+    SELECT water_typeand_features_table.waterFeatures,
+    SUM(CASE WHEN water_typeand_features_table.areaID=1 THEN forest_phy_quantity_table.inventory END)AS 'inventory1',
+    SUM(CASE WHEN water_typeand_features_table.areaID=2 THEN forest_phy_quantity_table.inventory  END)AS 'inventory2',
+    SUM(CASE WHEN water_typeand_features_table.areaID=3 THEN forest_phy_quantity_table.inventory  END)AS 'inventory3',
+    SUM(CASE WHEN water_typeand_features_table.areaID=4 THEN forest_phy_quantity_table.inventory  END)AS 'inventory4',
+    SUM(CASE WHEN water_typeand_features_table.areaID=5 THEN forest_phy_quantity_table.inventory  END)AS 'inventory5',
+    SUM(CASE WHEN water_typeand_features_table.areaID=6 THEN forest_phy_quantity_table.inventory  END)AS 'inventory6',
+    SUM(CASE WHEN water_typeand_features_table.areaID=7 THEN forest_phy_quantity_table.inventory  END)AS 'inventory7',
+    SUM(CASE WHEN water_typeand_features_table.areaID=8 THEN forest_phy_quantity_table.inventory  END)AS 'inventory8',
+    forest_phy_quantity_table.inventoryUnit
+    FROM water_typeand_features_table
+    INNER JOIN forest_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID = forest_phy_quantity_table.typeAndFeaturesID 
+    WHERE 1=1 
+     <if test="yearID != 0">
+      AND water_typeand_features_table.yearID = #{yearID,jdbcType=INTEGER}
+     </if>
+     <if test="waterTypeID != 0">
+      AND water_typeand_features_table.waterTypeID = #{waterTypeID,jdbcType=INTEGER}
+     </if>
+     GROUP BY water_typeand_features_table.waterFeatures
+  </select>
+  
+  <!-- 核算结果统计表弹窗-林木资源明细-价值量明细查询 -->
+  <select id="findForestValueDataByCondition" resultType="com.mz.vo.WaterTypeandFeaturesTableVo">
+    SELECT water_typeand_features_table.waterFeatures,
+    SUM(CASE WHEN water_typeand_features_table.areaID=1 THEN forest_phy_quantity_table.inventory*forest_price_table.coefficient*forest_price_table.price END)AS 'inventory1',
+    SUM(CASE WHEN water_typeand_features_table.areaID=2 THEN forest_phy_quantity_table.inventory*forest_price_table.coefficient*forest_price_table.price  END)AS 'inventory2',
+    SUM(CASE WHEN water_typeand_features_table.areaID=3 THEN forest_phy_quantity_table.inventory*forest_price_table.coefficient*forest_price_table.price  END)AS 'inventory3',
+    SUM(CASE WHEN water_typeand_features_table.areaID=4 THEN forest_phy_quantity_table.inventory*forest_price_table.coefficient*forest_price_table.price  END)AS 'inventory4',
+    SUM(CASE WHEN water_typeand_features_table.areaID=5 THEN forest_phy_quantity_table.inventory*forest_price_table.coefficient*forest_price_table.price  END)AS 'inventory5',
+    SUM(CASE WHEN water_typeand_features_table.areaID=6 THEN forest_phy_quantity_table.inventory*forest_price_table.coefficient*forest_price_table.price  END)AS 'inventory6',
+    SUM(CASE WHEN water_typeand_features_table.areaID=7 THEN forest_phy_quantity_table.inventory*forest_price_table.coefficient*forest_price_table.price  END)AS 'inventory7',
+    SUM(CASE WHEN water_typeand_features_table.areaID=8 THEN forest_phy_quantity_table.inventory*forest_price_table.coefficient*forest_price_table.price  END)AS 'inventory8',
+    '元' AS inventoryUnit
+    FROM water_typeand_features_table
+    INNER JOIN forest_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID = forest_phy_quantity_table.typeAndFeaturesID
+    JOIN forest_price_table ON water_typeand_features_table.waterTypeAndFeaturesID = forest_price_table.typeAndFeaturesID
+    WHERE 1=1 
+     <if test="yearID != 0">
+      AND water_typeand_features_table.yearID = #{yearID,jdbcType=INTEGER}
+     </if>
+     <if test="waterTypeID != 0">
+      AND water_typeand_features_table.waterTypeID = #{waterTypeID,jdbcType=INTEGER}
+     </if>
+     GROUP BY water_typeand_features_table.waterFeatures
+  </select>
+  
+  <!-- 矿产资源-获取有数据的年份 -->
+  <select id="findMineYearByCondition" resultType="com.mz.entity.YearTable">
+    SELECT year_table.yearID,year_table.yearMC
+    FROM water_typeand_features_table
+    JOIN year_table ON water_typeand_features_table.yearID = year_table.yearID
+    INNER JOIN mine_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID = mine_phy_quantity_table.typeAndFeaturesID 
+    GROUP BY water_typeand_features_table.yearID
+  </select>
+  
+  <!-- 核算结果统计表弹窗-矿产资源明细-实物量明细查询 -->
+  <select id="findMineDataByCondition" resultType="com.mz.vo.WaterTypeandFeaturesTableVo">
+    SELECT water_typeand_features_table.waterFeatures,
+    SUM(CASE WHEN water_typeand_features_table.areaID=1 THEN mine_phy_quantity_table.inventory END)AS 'inventory1',
+    SUM(CASE WHEN water_typeand_features_table.areaID=2 THEN mine_phy_quantity_table.inventory  END)AS 'inventory2',
+    SUM(CASE WHEN water_typeand_features_table.areaID=3 THEN mine_phy_quantity_table.inventory  END)AS 'inventory3',
+    SUM(CASE WHEN water_typeand_features_table.areaID=4 THEN mine_phy_quantity_table.inventory  END)AS 'inventory4',
+    SUM(CASE WHEN water_typeand_features_table.areaID=5 THEN mine_phy_quantity_table.inventory  END)AS 'inventory5',
+    SUM(CASE WHEN water_typeand_features_table.areaID=6 THEN mine_phy_quantity_table.inventory  END)AS 'inventory6',
+    SUM(CASE WHEN water_typeand_features_table.areaID=7 THEN mine_phy_quantity_table.inventory  END)AS 'inventory7',
+    SUM(CASE WHEN water_typeand_features_table.areaID=8 THEN mine_phy_quantity_table.inventory  END)AS 'inventory8',
+    mine_phy_quantity_table.inventoryUnit
+    FROM water_typeand_features_table
+    INNER JOIN mine_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID = mine_phy_quantity_table.typeAndFeaturesID 
+    WHERE 1=1 
+     <if test="yearID != 0">
+      AND water_typeand_features_table.yearID = #{yearID,jdbcType=INTEGER}
+     </if>
+     <if test="waterTypeID != 0">
+      AND water_typeand_features_table.waterTypeID = #{waterTypeID,jdbcType=INTEGER}
+     </if>
+     GROUP BY water_typeand_features_table.waterFeatures
+  </select>
+  
+  <!-- 核算结果统计表弹窗-矿产资源明细-价值量明细查询 -->
+  <select id="findMineValueDataByCondition" resultType="com.mz.vo.WaterTypeandFeaturesTableVo">
+    SELECT water_typeand_features_table.waterFeatures,
+    SUM(CASE WHEN water_typeand_features_table.areaID=1 THEN mine_phy_quantity_table.inventory*mine_price_table.coefficient*mine_price_table.price END)AS 'inventory1',
+    SUM(CASE WHEN water_typeand_features_table.areaID=2 THEN mine_phy_quantity_table.inventory*mine_price_table.coefficient*mine_price_table.price  END)AS 'inventory2',
+    SUM(CASE WHEN water_typeand_features_table.areaID=3 THEN mine_phy_quantity_table.inventory*mine_price_table.coefficient*mine_price_table.price  END)AS 'inventory3',
+    SUM(CASE WHEN water_typeand_features_table.areaID=4 THEN mine_phy_quantity_table.inventory*mine_price_table.coefficient*mine_price_table.price  END)AS 'inventory4',
+    SUM(CASE WHEN water_typeand_features_table.areaID=5 THEN mine_phy_quantity_table.inventory*mine_price_table.coefficient*mine_price_table.price  END)AS 'inventory5',
+    SUM(CASE WHEN water_typeand_features_table.areaID=6 THEN mine_phy_quantity_table.inventory*mine_price_table.coefficient*mine_price_table.price  END)AS 'inventory6',
+    SUM(CASE WHEN water_typeand_features_table.areaID=7 THEN mine_phy_quantity_table.inventory*mine_price_table.coefficient*mine_price_table.price  END)AS 'inventory7',
+    SUM(CASE WHEN water_typeand_features_table.areaID=8 THEN mine_phy_quantity_table.inventory*mine_price_table.coefficient*mine_price_table.price  END)AS 'inventory8',
+    '元' AS inventoryUnit
+    FROM water_typeand_features_table
+    INNER JOIN mine_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID = mine_phy_quantity_table.typeAndFeaturesID
+    JOIN mine_price_table ON water_typeand_features_table.waterTypeAndFeaturesID = mine_price_table.typeAndFeaturesID
+    WHERE 1=1 
+     <if test="yearID != 0">
+      AND water_typeand_features_table.yearID = #{yearID,jdbcType=INTEGER}
+     </if>
+     <if test="waterTypeID != 0">
+      AND water_typeand_features_table.waterTypeID = #{waterTypeID,jdbcType=INTEGER}
+     </if>
+     GROUP BY water_typeand_features_table.waterFeatures
+  </select>
+  
+  <!-- 可再生能资源-获取有数据的年份 -->
+  <select id="findRenewableYearByCondition" resultType="com.mz.entity.YearTable">
+    SELECT year_table.yearID,year_table.yearMC
+    FROM water_typeand_features_table
+    JOIN year_table ON water_typeand_features_table.yearID = year_table.yearID
+    INNER JOIN renewable_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID = renewable_phy_quantity_table.typeAndFeaturesID 
+    GROUP BY water_typeand_features_table.yearID
+  </select>
+  
+  <!-- 核算结果统计表弹窗-可再生能资源明细-实物量明细查询 -->
+  <select id="findRenewableDataByCondition" resultType="com.mz.vo.WaterTypeandFeaturesTableVo">
+    SELECT water_typeand_features_table.waterFeatures,
+    SUM(CASE WHEN water_typeand_features_table.areaID=1 THEN renewable_phy_quantity_table.inventory END)AS 'inventory1',
+    SUM(CASE WHEN water_typeand_features_table.areaID=2 THEN renewable_phy_quantity_table.inventory  END)AS 'inventory2',
+    SUM(CASE WHEN water_typeand_features_table.areaID=3 THEN renewable_phy_quantity_table.inventory  END)AS 'inventory3',
+    SUM(CASE WHEN water_typeand_features_table.areaID=4 THEN renewable_phy_quantity_table.inventory  END)AS 'inventory4',
+    SUM(CASE WHEN water_typeand_features_table.areaID=5 THEN renewable_phy_quantity_table.inventory  END)AS 'inventory5',
+    SUM(CASE WHEN water_typeand_features_table.areaID=6 THEN renewable_phy_quantity_table.inventory  END)AS 'inventory6',
+    SUM(CASE WHEN water_typeand_features_table.areaID=7 THEN renewable_phy_quantity_table.inventory  END)AS 'inventory7',
+    SUM(CASE WHEN water_typeand_features_table.areaID=8 THEN renewable_phy_quantity_table.inventory  END)AS 'inventory8',
+    renewable_phy_quantity_table.inventoryUnit
+    FROM water_typeand_features_table
+    INNER JOIN renewable_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID = renewable_phy_quantity_table.typeAndFeaturesID 
+    WHERE 1=1 
+     <if test="yearID != 0">
+      AND water_typeand_features_table.yearID = #{yearID,jdbcType=INTEGER}
+     </if>
+     <if test="waterTypeID != 0">
+      AND water_typeand_features_table.waterTypeID = #{waterTypeID,jdbcType=INTEGER}
+     </if>
+     GROUP BY water_typeand_features_table.waterFeatures
+  </select>
+  
+  <!-- 核算结果统计表弹窗-可再生能源明细-价值量明细查询 -->
+  <select id="findRenewableValueDataByCondition" resultType="com.mz.vo.WaterTypeandFeaturesTableVo">
+    SELECT water_typeand_features_table.waterFeatures,
+    SUM(CASE WHEN water_typeand_features_table.areaID=1 THEN renewable_phy_quantity_table.inventory*renewable_price_table.coefficient*renewable_price_table.price END)AS 'inventory1',
+    SUM(CASE WHEN water_typeand_features_table.areaID=2 THEN renewable_phy_quantity_table.inventory*renewable_price_table.coefficient*renewable_price_table.price  END)AS 'inventory2',
+    SUM(CASE WHEN water_typeand_features_table.areaID=3 THEN renewable_phy_quantity_table.inventory*renewable_price_table.coefficient*renewable_price_table.price  END)AS 'inventory3',
+    SUM(CASE WHEN water_typeand_features_table.areaID=4 THEN renewable_phy_quantity_table.inventory*renewable_price_table.coefficient*renewable_price_table.price  END)AS 'inventory4',
+    SUM(CASE WHEN water_typeand_features_table.areaID=5 THEN renewable_phy_quantity_table.inventory*renewable_price_table.coefficient*renewable_price_table.price  END)AS 'inventory5',
+    SUM(CASE WHEN water_typeand_features_table.areaID=6 THEN renewable_phy_quantity_table.inventory*renewable_price_table.coefficient*renewable_price_table.price  END)AS 'inventory6',
+    SUM(CASE WHEN water_typeand_features_table.areaID=7 THEN renewable_phy_quantity_table.inventory*renewable_price_table.coefficient*renewable_price_table.price  END)AS 'inventory7',
+    SUM(CASE WHEN water_typeand_features_table.areaID=8 THEN renewable_phy_quantity_table.inventory*renewable_price_table.coefficient*renewable_price_table.price  END)AS 'inventory8',
+    '元' AS inventoryUnit
+    FROM water_typeand_features_table
+    INNER JOIN renewable_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID = renewable_phy_quantity_table.typeAndFeaturesID
+    JOIN renewable_price_table ON water_typeand_features_table.waterTypeAndFeaturesID = renewable_price_table.typeAndFeaturesID
+    WHERE 1=1 
+     <if test="yearID != 0">
+      AND water_typeand_features_table.yearID = #{yearID,jdbcType=INTEGER}
+     </if>
+     <if test="waterTypeID != 0">
+      AND water_typeand_features_table.waterTypeID = #{waterTypeID,jdbcType=INTEGER}
+     </if>
+     GROUP BY water_typeand_features_table.waterFeatures
+  </select>
+  
+  <!-- 大气资源-获取有数据的年份 -->
+  <select id="findAtmosphereYearByCondition" resultType="com.mz.entity.YearTable">
+    SELECT year_table.yearID,year_table.yearMC
+    FROM water_typeand_features_table
+    JOIN year_table ON water_typeand_features_table.yearID = year_table.yearID
+    INNER JOIN atmosphere_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID = atmosphere_phy_quantity_table.typeAndFeaturesID 
+    GROUP BY water_typeand_features_table.yearID
+  </select>
+  
+  <!-- 核算结果统计表弹窗-大气资源明细-实物量明细查询 -->
+  <select id="findAtmosphereDataByCondition" resultType="com.mz.vo.WaterTypeandFeaturesTableVo">
+    SELECT water_typeand_features_table.waterFeatures,
+    SUM(CASE WHEN water_typeand_features_table.areaID=1 THEN atmosphere_phy_quantity_table.inventory END)AS 'inventory1',
+    SUM(CASE WHEN water_typeand_features_table.areaID=2 THEN atmosphere_phy_quantity_table.inventory  END)AS 'inventory2',
+    SUM(CASE WHEN water_typeand_features_table.areaID=3 THEN atmosphere_phy_quantity_table.inventory  END)AS 'inventory3',
+    SUM(CASE WHEN water_typeand_features_table.areaID=4 THEN atmosphere_phy_quantity_table.inventory  END)AS 'inventory4',
+    SUM(CASE WHEN water_typeand_features_table.areaID=5 THEN atmosphere_phy_quantity_table.inventory  END)AS 'inventory5',
+    SUM(CASE WHEN water_typeand_features_table.areaID=6 THEN atmosphere_phy_quantity_table.inventory  END)AS 'inventory6',
+    SUM(CASE WHEN water_typeand_features_table.areaID=7 THEN atmosphere_phy_quantity_table.inventory  END)AS 'inventory7',
+    SUM(CASE WHEN water_typeand_features_table.areaID=8 THEN atmosphere_phy_quantity_table.inventory  END)AS 'inventory8',
+    atmosphere_phy_quantity_table.inventoryUnit
+    FROM water_typeand_features_table
+    INNER JOIN atmosphere_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID = atmosphere_phy_quantity_table.typeAndFeaturesID 
+    WHERE 1=1 
+     <if test="yearID != 0">
+      AND water_typeand_features_table.yearID = #{yearID,jdbcType=INTEGER}
+     </if>
+     <if test="waterTypeID != 0">
+      AND water_typeand_features_table.waterTypeID = #{waterTypeID,jdbcType=INTEGER}
+     </if>
+     GROUP BY water_typeand_features_table.waterFeatures
+  </select>
+  
+  <!-- 核算结果统计表弹窗-大气资源明细-价值量明细查询 -->
+  <select id="findAtmosphereValueDataByCondition" resultType="com.mz.vo.WaterTypeandFeaturesTableVo">
+    SELECT water_typeand_features_table.waterFeatures,
+    SUM(CASE WHEN water_typeand_features_table.areaID=1 THEN atmosphere_phy_quantity_table.inventory*atmosphere_price_table.coefficient*atmosphere_price_table.price END)AS 'inventory1',
+    SUM(CASE WHEN water_typeand_features_table.areaID=2 THEN atmosphere_phy_quantity_table.inventory*atmosphere_price_table.coefficient*atmosphere_price_table.price  END)AS 'inventory2',
+    SUM(CASE WHEN water_typeand_features_table.areaID=3 THEN atmosphere_phy_quantity_table.inventory*atmosphere_price_table.coefficient*atmosphere_price_table.price  END)AS 'inventory3',
+    SUM(CASE WHEN water_typeand_features_table.areaID=4 THEN atmosphere_phy_quantity_table.inventory*atmosphere_price_table.coefficient*atmosphere_price_table.price  END)AS 'inventory4',
+    SUM(CASE WHEN water_typeand_features_table.areaID=5 THEN atmosphere_phy_quantity_table.inventory*atmosphere_price_table.coefficient*atmosphere_price_table.price  END)AS 'inventory5',
+    SUM(CASE WHEN water_typeand_features_table.areaID=6 THEN atmosphere_phy_quantity_table.inventory*atmosphere_price_table.coefficient*atmosphere_price_table.price  END)AS 'inventory6',
+    SUM(CASE WHEN water_typeand_features_table.areaID=7 THEN atmosphere_phy_quantity_table.inventory*atmosphere_price_table.coefficient*atmosphere_price_table.price  END)AS 'inventory7',
+    SUM(CASE WHEN water_typeand_features_table.areaID=8 THEN atmosphere_phy_quantity_table.inventory*atmosphere_price_table.coefficient*atmosphere_price_table.price  END)AS 'inventory8',
+    '元' AS inventoryUnit
+    FROM water_typeand_features_table
+    INNER JOIN atmosphere_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID = atmosphere_phy_quantity_table.typeAndFeaturesID
+    JOIN atmosphere_price_table ON water_typeand_features_table.waterTypeAndFeaturesID = atmosphere_price_table.typeAndFeaturesID
+    WHERE 1=1 
+     <if test="yearID != 0">
+      AND water_typeand_features_table.yearID = #{yearID,jdbcType=INTEGER}
+     </if>
+     <if test="waterTypeID != 0">
+      AND water_typeand_features_table.waterTypeID = #{waterTypeID,jdbcType=INTEGER}
+     </if>
+     GROUP BY water_typeand_features_table.waterFeatures
+  </select>
+  
+  <!-- =======================核算-统计图-时间过度统计Start======================= -->
+  <!-- 核算-统计图-时间过度统计-明细类型查询-水资源 -->
+  <select id="findWaterMxDateSelectByCondition" resultType="com.mz.entity.WaterTypeandFeaturesTable">
+    SELECT water_typeand_features_table.waterFeatures
+    FROM water_typeand_features_table
+    INNER JOIN water_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID=water_phy_quantity_table.waterTypeAndFeaturesID
+    INNER JOIN water_price_table ON water_typeand_features_table.waterTypeAndFeaturesID = water_price_table.waterTypeAndFeaturesID
+    WHERE water_typeand_features_table.waterTypeID = #{waterTypeID,jdbcType=INTEGER}
+    GROUP BY water_typeand_features_table.waterFeatures
+  </select>
+  
+  <!-- 核算-统计图-时间过度统计-明细类型数据查询-水资源 -->
+  <select id="findWaterMxDateDataByCondition" resultType="com.mz.vo.WaterTypeandFeaturesTableVo">
+    SELECT year_table.yearMC,
+      SUM(CASE WHEN water_typeand_features_table.areaID=1 THEN water_phy_quantity_table.inventory*water_price_table.coefficient*water_price_table.price END)AS 'inventory1',
+      SUM(CASE WHEN water_typeand_features_table.areaID=2 THEN water_phy_quantity_table.inventory*water_price_table.coefficient*water_price_table.price  END)AS 'inventory2',
+      SUM(CASE WHEN water_typeand_features_table.areaID=3 THEN water_phy_quantity_table.inventory*water_price_table.coefficient*water_price_table.price  END)AS 'inventory3',
+      SUM(CASE WHEN water_typeand_features_table.areaID=4 THEN water_phy_quantity_table.inventory*water_price_table.coefficient*water_price_table.price  END)AS 'inventory4',
+      SUM(CASE WHEN water_typeand_features_table.areaID=5 THEN water_phy_quantity_table.inventory*water_price_table.coefficient*water_price_table.price  END)AS 'inventory5',
+      SUM(CASE WHEN water_typeand_features_table.areaID=6 THEN water_phy_quantity_table.inventory*water_price_table.coefficient*water_price_table.price  END)AS 'inventory6',
+      SUM(CASE WHEN water_typeand_features_table.areaID=7 THEN water_phy_quantity_table.inventory*water_price_table.coefficient*water_price_table.price  END)AS 'inventory7',
+      SUM(CASE WHEN water_typeand_features_table.areaID=8 THEN water_phy_quantity_table.inventory*water_price_table.coefficient*water_price_table.price  END)AS 'inventory8'
+    FROM water_typeand_features_table
+    JOIN year_table ON water_typeand_features_table.yearID=year_table.yearID
+    INNER JOIN water_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID=water_phy_quantity_table.waterTypeAndFeaturesID
+    INNER JOIN water_price_table ON water_typeand_features_table.waterTypeAndFeaturesID = water_price_table.waterTypeAndFeaturesID
+    WHERE water_typeand_features_table.waterFeatures = #{waterFeatures,jdbcType=VARCHAR}
+    GROUP BY water_typeand_features_table.yearID
+  </select>
+  
+  <!-- 核算-统计图-时间过度统计-明细类型查询-土地资源 -->
+  <select id="findLandMxDateSelectByCondition" resultType="com.mz.entity.WaterTypeandFeaturesTable">
+    SELECT water_typeand_features_table.waterFeatures
+    FROM water_typeand_features_table
+    INNER JOIN land_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID=land_phy_quantity_table.typeAndFeaturesID
+    INNER JOIN land_price_table ON water_typeand_features_table.waterTypeAndFeaturesID = land_price_table.typeAndFeaturesID
+    WHERE water_typeand_features_table.waterTypeID = #{waterTypeID,jdbcType=INTEGER}
+    GROUP BY water_typeand_features_table.waterFeatures
+  </select>
+  
+  <!-- 核算-统计图-时间过度统计-明细类型数据查询-土地资源 -->
+  <select id="findLandMxDateDataByCondition" resultType="com.mz.vo.WaterTypeandFeaturesTableVo">
+    SELECT year_table.yearMC,
+      SUM(CASE WHEN water_typeand_features_table.areaID=1 THEN land_phy_quantity_table.inventory*land_price_table.coefficient*land_price_table.price END)AS 'inventory1',
+      SUM(CASE WHEN water_typeand_features_table.areaID=2 THEN land_phy_quantity_table.inventory*land_price_table.coefficient*land_price_table.price  END)AS 'inventory2',
+      SUM(CASE WHEN water_typeand_features_table.areaID=3 THEN land_phy_quantity_table.inventory*land_price_table.coefficient*land_price_table.price  END)AS 'inventory3',
+      SUM(CASE WHEN water_typeand_features_table.areaID=4 THEN land_phy_quantity_table.inventory*land_price_table.coefficient*land_price_table.price  END)AS 'inventory4',
+      SUM(CASE WHEN water_typeand_features_table.areaID=5 THEN land_phy_quantity_table.inventory*land_price_table.coefficient*land_price_table.price  END)AS 'inventory5',
+      SUM(CASE WHEN water_typeand_features_table.areaID=6 THEN land_phy_quantity_table.inventory*land_price_table.coefficient*land_price_table.price  END)AS 'inventory6',
+      SUM(CASE WHEN water_typeand_features_table.areaID=7 THEN land_phy_quantity_table.inventory*land_price_table.coefficient*land_price_table.price  END)AS 'inventory7',
+      SUM(CASE WHEN water_typeand_features_table.areaID=8 THEN land_phy_quantity_table.inventory*land_price_table.coefficient*land_price_table.price  END)AS 'inventory8'
+    FROM water_typeand_features_table
+    JOIN year_table ON water_typeand_features_table.yearID=year_table.yearID
+    INNER JOIN land_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID=land_phy_quantity_table.typeAndFeaturesID
+    INNER JOIN land_price_table ON water_typeand_features_table.waterTypeAndFeaturesID = land_price_table.typeAndFeaturesID
+    WHERE water_typeand_features_table.waterFeatures = #{waterFeatures,jdbcType=VARCHAR}
+    GROUP BY water_typeand_features_table.yearID
+  </select>
+  
+  <!-- 核算-统计图-时间过度统计-明细类型查询-林木资源 -->
+  <select id="findForestMxDateSelectByCondition" resultType="com.mz.entity.WaterTypeandFeaturesTable">
+    SELECT water_typeand_features_table.waterFeatures
+    FROM water_typeand_features_table
+    INNER JOIN forest_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID=forest_phy_quantity_table.typeAndFeaturesID
+    INNER JOIN forest_price_table ON water_typeand_features_table.waterTypeAndFeaturesID = forest_price_table.typeAndFeaturesID
+    WHERE water_typeand_features_table.waterTypeID = #{waterTypeID,jdbcType=INTEGER}
+    GROUP BY water_typeand_features_table.waterFeatures
+  </select>
+  
+  <!-- 核算-统计图-时间过度统计-明细类型数据查询-林木资源 -->
+  <select id="findForestMxDateDataByCondition" resultType="com.mz.vo.WaterTypeandFeaturesTableVo">
+    SELECT year_table.yearMC,
+      SUM(CASE WHEN water_typeand_features_table.areaID=1 THEN forest_phy_quantity_table.inventory*forest_price_table.coefficient*forest_price_table.price END)AS 'inventory1',
+      SUM(CASE WHEN water_typeand_features_table.areaID=2 THEN forest_phy_quantity_table.inventory*forest_price_table.coefficient*forest_price_table.price  END)AS 'inventory2',
+      SUM(CASE WHEN water_typeand_features_table.areaID=3 THEN forest_phy_quantity_table.inventory*forest_price_table.coefficient*forest_price_table.price  END)AS 'inventory3',
+      SUM(CASE WHEN water_typeand_features_table.areaID=4 THEN forest_phy_quantity_table.inventory*forest_price_table.coefficient*forest_price_table.price  END)AS 'inventory4',
+      SUM(CASE WHEN water_typeand_features_table.areaID=5 THEN forest_phy_quantity_table.inventory*forest_price_table.coefficient*forest_price_table.price  END)AS 'inventory5',
+      SUM(CASE WHEN water_typeand_features_table.areaID=6 THEN forest_phy_quantity_table.inventory*forest_price_table.coefficient*forest_price_table.price  END)AS 'inventory6',
+      SUM(CASE WHEN water_typeand_features_table.areaID=7 THEN forest_phy_quantity_table.inventory*forest_price_table.coefficient*forest_price_table.price  END)AS 'inventory7',
+      SUM(CASE WHEN water_typeand_features_table.areaID=8 THEN forest_phy_quantity_table.inventory*forest_price_table.coefficient*forest_price_table.price  END)AS 'inventory8'
+    FROM water_typeand_features_table
+    JOIN year_table ON water_typeand_features_table.yearID=year_table.yearID
+    INNER JOIN forest_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID=forest_phy_quantity_table.typeAndFeaturesID
+    INNER JOIN forest_price_table ON water_typeand_features_table.waterTypeAndFeaturesID = forest_price_table.typeAndFeaturesID
+    WHERE water_typeand_features_table.waterFeatures = #{waterFeatures,jdbcType=VARCHAR}
+    GROUP BY water_typeand_features_table.yearID
+  </select>
+  
+  <!-- 核算-统计图-时间过度统计-明细类型查询-矿产资源 -->
+  <select id="findMineMxDateSelectByCondition" resultType="com.mz.entity.WaterTypeandFeaturesTable">
+    SELECT water_typeand_features_table.waterFeatures
+    FROM water_typeand_features_table
+    INNER JOIN mine_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID=mine_phy_quantity_table.typeAndFeaturesID
+    INNER JOIN mine_price_table ON water_typeand_features_table.waterTypeAndFeaturesID = mine_price_table.typeAndFeaturesID
+    WHERE water_typeand_features_table.waterTypeID = #{waterTypeID,jdbcType=INTEGER}
+    GROUP BY water_typeand_features_table.waterFeatures
+  </select>
+  
+  <!-- 核算-统计图-时间过度统计-明细类型数据查询-矿产资源 -->
+  <select id="findMineMxDateDataByCondition" resultType="com.mz.vo.WaterTypeandFeaturesTableVo">
+    SELECT year_table.yearMC,
+      SUM(CASE WHEN water_typeand_features_table.areaID=1 THEN mine_phy_quantity_table.inventory*mine_price_table.coefficient*mine_price_table.price END)AS 'inventory1',
+      SUM(CASE WHEN water_typeand_features_table.areaID=2 THEN mine_phy_quantity_table.inventory*mine_price_table.coefficient*mine_price_table.price  END)AS 'inventory2',
+      SUM(CASE WHEN water_typeand_features_table.areaID=3 THEN mine_phy_quantity_table.inventory*mine_price_table.coefficient*mine_price_table.price  END)AS 'inventory3',
+      SUM(CASE WHEN water_typeand_features_table.areaID=4 THEN mine_phy_quantity_table.inventory*mine_price_table.coefficient*mine_price_table.price  END)AS 'inventory4',
+      SUM(CASE WHEN water_typeand_features_table.areaID=5 THEN mine_phy_quantity_table.inventory*mine_price_table.coefficient*mine_price_table.price  END)AS 'inventory5',
+      SUM(CASE WHEN water_typeand_features_table.areaID=6 THEN mine_phy_quantity_table.inventory*mine_price_table.coefficient*mine_price_table.price  END)AS 'inventory6',
+      SUM(CASE WHEN water_typeand_features_table.areaID=7 THEN mine_phy_quantity_table.inventory*mine_price_table.coefficient*mine_price_table.price  END)AS 'inventory7',
+      SUM(CASE WHEN water_typeand_features_table.areaID=8 THEN mine_phy_quantity_table.inventory*mine_price_table.coefficient*mine_price_table.price  END)AS 'inventory8'
+    FROM water_typeand_features_table
+    JOIN year_table ON water_typeand_features_table.yearID=year_table.yearID
+    INNER JOIN mine_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID=mine_phy_quantity_table.typeAndFeaturesID
+    INNER JOIN mine_price_table ON water_typeand_features_table.waterTypeAndFeaturesID = mine_price_table.typeAndFeaturesID
+    WHERE water_typeand_features_table.waterFeatures = #{waterFeatures,jdbcType=VARCHAR}
+    GROUP BY water_typeand_features_table.yearID
+  </select>
+  
+  <!-- 核算-统计图-时间过度统计-明细类型查询-可再生能源 -->
+  <select id="findRenewableMxDateSelectByCondition" resultType="com.mz.entity.WaterTypeandFeaturesTable">
+    SELECT water_typeand_features_table.waterFeatures
+    FROM water_typeand_features_table
+    INNER JOIN renewable_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID=renewable_phy_quantity_table.typeAndFeaturesID
+    INNER JOIN renewable_price_table ON water_typeand_features_table.waterTypeAndFeaturesID = renewable_price_table.typeAndFeaturesID
+    WHERE water_typeand_features_table.waterTypeID = #{waterTypeID,jdbcType=INTEGER}
+    GROUP BY water_typeand_features_table.waterFeatures
+  </select>
+  
+  <!-- 核算-统计图-时间过度统计-明细类型数据查询-可再生能源 -->
+  <select id="findRenewableMxDateDataByCondition" resultType="com.mz.vo.WaterTypeandFeaturesTableVo">
+    SELECT year_table.yearMC,
+      SUM(CASE WHEN water_typeand_features_table.areaID=1 THEN renewable_phy_quantity_table.inventory*renewable_price_table.coefficient*renewable_price_table.price END)AS 'inventory1',
+      SUM(CASE WHEN water_typeand_features_table.areaID=2 THEN renewable_phy_quantity_table.inventory*renewable_price_table.coefficient*renewable_price_table.price  END)AS 'inventory2',
+      SUM(CASE WHEN water_typeand_features_table.areaID=3 THEN renewable_phy_quantity_table.inventory*renewable_price_table.coefficient*renewable_price_table.price  END)AS 'inventory3',
+      SUM(CASE WHEN water_typeand_features_table.areaID=4 THEN renewable_phy_quantity_table.inventory*renewable_price_table.coefficient*renewable_price_table.price  END)AS 'inventory4',
+      SUM(CASE WHEN water_typeand_features_table.areaID=5 THEN renewable_phy_quantity_table.inventory*renewable_price_table.coefficient*renewable_price_table.price  END)AS 'inventory5',
+      SUM(CASE WHEN water_typeand_features_table.areaID=6 THEN renewable_phy_quantity_table.inventory*renewable_price_table.coefficient*renewable_price_table.price  END)AS 'inventory6',
+      SUM(CASE WHEN water_typeand_features_table.areaID=7 THEN renewable_phy_quantity_table.inventory*renewable_price_table.coefficient*renewable_price_table.price  END)AS 'inventory7',
+      SUM(CASE WHEN water_typeand_features_table.areaID=8 THEN renewable_phy_quantity_table.inventory*renewable_price_table.coefficient*renewable_price_table.price  END)AS 'inventory8'
+    FROM water_typeand_features_table
+    JOIN year_table ON water_typeand_features_table.yearID=year_table.yearID
+    INNER JOIN renewable_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID=renewable_phy_quantity_table.typeAndFeaturesID
+    INNER JOIN renewable_price_table ON water_typeand_features_table.waterTypeAndFeaturesID = renewable_price_table.typeAndFeaturesID
+    WHERE water_typeand_features_table.waterFeatures = #{waterFeatures,jdbcType=VARCHAR}
+    GROUP BY water_typeand_features_table.yearID
+  </select>
+  
+  <!-- 核算-统计图-时间过度统计-明细类型查询-大气资源 -->
+  <select id="findAtmosphereMxDateSelectByCondition" resultType="com.mz.entity.WaterTypeandFeaturesTable">
+    SELECT water_typeand_features_table.waterFeatures
+    FROM water_typeand_features_table
+    INNER JOIN atmosphere_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID=atmosphere_phy_quantity_table.typeAndFeaturesID
+    INNER JOIN atmosphere_price_table ON water_typeand_features_table.waterTypeAndFeaturesID = atmosphere_price_table.typeAndFeaturesID
+    WHERE water_typeand_features_table.waterTypeID = #{waterTypeID,jdbcType=INTEGER}
+    GROUP BY water_typeand_features_table.waterFeatures
+  </select>
+  
+  <!-- 核算-统计图-时间过度统计-明细类型数据查询-大气资源 -->
+  <select id="findAtmosphereMxDateDataByCondition" resultType="com.mz.vo.WaterTypeandFeaturesTableVo">
+    SELECT year_table.yearMC,
+      SUM(CASE WHEN water_typeand_features_table.areaID=1 THEN atmosphere_phy_quantity_table.inventory*atmosphere_price_table.coefficient*atmosphere_price_table.price END)AS 'inventory1',
+      SUM(CASE WHEN water_typeand_features_table.areaID=2 THEN atmosphere_phy_quantity_table.inventory*atmosphere_price_table.coefficient*atmosphere_price_table.price  END)AS 'inventory2',
+      SUM(CASE WHEN water_typeand_features_table.areaID=3 THEN atmosphere_phy_quantity_table.inventory*atmosphere_price_table.coefficient*atmosphere_price_table.price  END)AS 'inventory3',
+      SUM(CASE WHEN water_typeand_features_table.areaID=4 THEN atmosphere_phy_quantity_table.inventory*atmosphere_price_table.coefficient*atmosphere_price_table.price  END)AS 'inventory4',
+      SUM(CASE WHEN water_typeand_features_table.areaID=5 THEN atmosphere_phy_quantity_table.inventory*atmosphere_price_table.coefficient*atmosphere_price_table.price  END)AS 'inventory5',
+      SUM(CASE WHEN water_typeand_features_table.areaID=6 THEN atmosphere_phy_quantity_table.inventory*atmosphere_price_table.coefficient*atmosphere_price_table.price  END)AS 'inventory6',
+      SUM(CASE WHEN water_typeand_features_table.areaID=7 THEN atmosphere_phy_quantity_table.inventory*atmosphere_price_table.coefficient*atmosphere_price_table.price  END)AS 'inventory7',
+      SUM(CASE WHEN water_typeand_features_table.areaID=8 THEN atmosphere_phy_quantity_table.inventory*atmosphere_price_table.coefficient*atmosphere_price_table.price  END)AS 'inventory8'
+    FROM water_typeand_features_table
+    JOIN year_table ON water_typeand_features_table.yearID=year_table.yearID
+    INNER JOIN atmosphere_phy_quantity_table ON water_typeand_features_table.waterTypeAndFeaturesID=atmosphere_phy_quantity_table.typeAndFeaturesID
+    INNER JOIN atmosphere_price_table ON water_typeand_features_table.waterTypeAndFeaturesID = atmosphere_price_table.typeAndFeaturesID
+    WHERE water_typeand_features_table.waterFeatures = #{waterFeatures,jdbcType=VARCHAR}
+    GROUP BY water_typeand_features_table.yearID
+  </select>
+  <!-- =======================核算-统计图-时间过度统计End======================= -->
+  
+  <select id="selectAreaCheck" resultType="com.mz.vo.ShowAreaCheck">
+    SELECT
+    SUM(water_phy_quantity_table.inventory)as 'shiwuliang',
+    SUM(water_value_table.AmountOfValue)as 'jiazhiliang',
+    myTypeAndFeater.areaID,myTypeAndFeater.yearID
+    FROM
+    (select * from water_typeand_features_table where water_typeand_features_table.yearID=#{yearID})as myTypeAndFeater
+    INNER JOIN water_phy_quantity_table ON 
+    myTypeAndFeater.waterTypeAndFeaturesID = water_phy_quantity_table.waterTypeAndFeaturesID 
+    join water_value_table on
+    myTypeAndFeater.waterTypeAndFeaturesID = water_value_table.waterTypeAndFeaturesID 
+    where  myTypeAndFeater.areaID=#{areaID}
+  </select>
+  
+</mapper>
