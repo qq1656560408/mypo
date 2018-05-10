@@ -1,0 +1,5 @@
+近在搭建一个可以实时进行聊
+天和视频直播的项目，使用的技术包
+括：nginx-rtmp + obs + video.js + socket.io 
+git config --global user.name "qq1656560408"
+git config --global user.email "1656560408@qq.com"
